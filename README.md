@@ -1,97 +1,37 @@
-**English** | [中文](README.zh-CN.md)
-
 # NiceDesign
 
 Short, rule-only agent skills for web UI — color & depth, layout, interaction, GSAP-first animation. Less fluff. More rules.
 
-## How to download / install
+精简、规则向的 Web UI Agent Skills：颜色与深度、布局、交互、GSAP 优先的动画。少废话，多规则。
 
-Requires [Node.js](https://nodejs.org/) 18+. No global install needed — `npx` runs the CLI once.
-
-### 1. Install the whole pack (recommended)
+## Install · 安装
 
 ```bash
 npx skills add https://github.com/bo-516/NiceDesign
 ```
 
-Shorthand:
+Works with Cursor, Claude Code, Codex, and other agents that support the Agent Skills format.
 
-```bash
-npx skills add bo-516/NiceDesign
-```
+适用于 Cursor、Claude Code、Codex 等支持 Agent Skills 格式的工具。
 
-The CLI lists the four skills, asks which agents to target (Cursor, Claude Code, Codex, …), and copies them into the right directory.
+## Skills · 技能
 
-### 2. Install one skill only
+| Skill | EN | 中文 |
+|-------|----|------|
+| [`web-color-depth`](skills/web-color-depth/SKILL.md) | Palettes, OKLCH tokens, dark mode, layered shadows / elevation | 色板、OKLCH token、暗色模式、分层阴影与 Elevation |
+| [`web-layout`](skills/web-layout/SKILL.md) | Spacing scale, grids, hierarchy, app shells, composition bans | 间距阶、栅格、层次、应用壳、构图禁令 |
+| [`web-interaction`](skills/web-interaction/SKILL.md) | Control states, forms, micro-feedback, CSS motion budgets | 控件八态、表单、微反馈、CSS 动效预算 |
+| [`web-animation`](skills/web-animation/SKILL.md) | GSAP-first timelines, ScrollTrigger, React cleanup, perf | GSAP 优先：时间线、ScrollTrigger、React 清理、性能 |
 
-```bash
-npx skills add bo-516/NiceDesign --skill web-color-depth
-npx skills add bo-516/NiceDesign --skill web-layout
-npx skills add bo-516/NiceDesign --skill web-interaction
-npx skills add bo-516/NiceDesign --skill web-animation
-```
-
-### 3. Project vs global
-
-| Scope | Command | Where it lands |
-|-------|---------|----------------|
-| This repo only (default) | `npx skills add bo-516/NiceDesign` | e.g. `.cursor/skills/`, `.claude/skills/` |
-| All your projects | `npx skills add bo-516/NiceDesign -g` | e.g. `~/.cursor/skills/`, `~/.claude/skills/` |
-
-Skip prompts (CI / scripts):
-
-```bash
-npx skills add bo-516/NiceDesign --all -y
-```
-
-### 4. Manual install (no CLI)
-
-```bash
-git clone https://github.com/bo-516/NiceDesign.git
-```
-
-Copy each folder under `skills/` into your agent's skills directory:
-
-| Agent | Project | Global |
-|-------|---------|--------|
-| Cursor | `.cursor/skills/` | `~/.cursor/skills/` |
-| Claude Code | `.claude/skills/` | `~/.claude/skills/` |
-| Codex | `.codex/skills/` | `~/.codex/skills/` |
-| GitHub Copilot | `.github/skills/` | — |
-
-Example for Cursor (project):
-
-```bash
-cp -R NiceDesign/skills/web-layout .cursor/skills/web-layout
-```
-
-Each skill is a folder with a `SKILL.md`. Do not flatten the files.
-
-### 5. Update / uninstall
-
-```bash
-npx skills update          # pull latest
-npx skills list            # see what's installed
-npx skills remove web-layout
-```
-
-Works with Cursor, Claude Code, Codex, and other agents that support the [Agent Skills](https://agentskills.io) format.
-
-## Skills
-
-| Skill | What it covers |
-|-------|----------------|
-| [`web-color-depth`](skills/web-color-depth/SKILL.md) | Palettes, OKLCH tokens, dark mode, layered shadows / elevation |
-| [`web-layout`](skills/web-layout/SKILL.md) | Spacing scale, grids, hierarchy, app shells, composition bans |
-| [`web-interaction`](skills/web-interaction/SKILL.md) | Control states, forms, micro-feedback, CSS motion budgets |
-| [`web-animation`](skills/web-animation/SKILL.md) | GSAP-first timelines, ScrollTrigger, React cleanup, perf |
-
-## Philosophy
+## Philosophy · 理念
 
 - **Rules over essays** — keep context small; ship decisions, not process theater.
+- **规则重于长文** — 控制上下文体积；交付可执行决策，而不是流程表演。
 - **One pack, four lenses** — color/depth · layout · interaction · animation. Shadows live with color (elevation).
+- **一套四视角** — 颜色/深度 · 布局 · 交互 · 动画。阴影归入颜色（Elevation）。
 - Distilled from community & official sources (frontend-design, ui-craft, taste-skill, impeccable, greensock/gsap-skills, DESIGN.md, and others) into compact rule packs.
+- 从社区与官方来源提炼压缩而成（含 frontend-design、ui-craft、taste-skill、impeccable、greensock/gsap-skills、DESIGN.md 等）。
 
-## License
+## License · 许可
 
-[MIT](LICENSE)
+MIT

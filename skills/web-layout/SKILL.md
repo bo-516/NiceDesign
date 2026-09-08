@@ -1,72 +1,88 @@
 ---
 name: web-layout
 description: >-
-  Use when building page structure, spacing scales, grids, dashboards, app
-  shells, responsive composition, or visual hierarchy. Distilled from ui-craft
-  layout, impeccable layout, atelier, shadcn-layouts, interface-design,
-  taste-skill, DESIGN.md.
+  Use when building page structure, spacing, grids, dashboards, app shells,
+  landing composition, responsive layout, or visual hierarchy. Loads surface
+  recipes for landing/dashboard/shell. Distilled from ui-craft, impeccable,
+  taste-skill, shadcn-layouts, interface-design.
 ---
 # Web Layout
 
-Rules only. Spatial structure for app/marketing UI.
+Rules only. One skill: core below + surface recipes in `references/`.
+**Before coding any non-trivial surface:** run §Plan, then load the matching recipe.
 
-## Spacing
+| Surface | Load |
+|---------|------|
+| Landing / marketing / portfolio | [references/landing.md](references/landing.md) |
+| Dashboard / admin / analytics | [references/dashboard.md](references/dashboard.md) |
+| App chrome / sidebar / scroll regions | [references/shell.md](references/shell.md) |
+| Mixed | shell + the primary surface recipe |
+
+## Plan (mandatory)
+
+Emit before code (one block):
+
+1. **Surface + audience** — e.g. “B2B dashboard for ops”
+2. **Layout concept** — 1 sentence + ASCII wireframe (regions only)
+3. **Density** — spacious | comfortable | dense
+4. **Focal point** — the single thing that wins the squint test
+5. **Signature bet** — one layout risk (asymmetric hero, bento, sticky subnav…) or “none”
+
+If the plan looks like a generic SaaS card kit, revise once before coding.
+
+## Spacing (8pt)
 
 ```css
---space-xs: 0.25rem; /* 4 */
---space-sm: 0.5rem;  /* 8 */
---space-md: 1rem;    /* 16 */
---space-lg: 1.5rem;  /* 24 */
---space-xl: 2rem;    /* 32 */
---space-2xl: 3rem;   /* 48 */
---space-3xl: 4rem;   /* 64 */
---space-4xl: 6rem;   /* 96 */
+--space-xs: 0.25rem; /* 4 */  --space-sm: 0.5rem;  /* 8 */
+--space-md: 1rem;    /* 16 */ --space-lg: 1.5rem; /* 24 */
+--space-xl: 2rem;    /* 32 */ --space-2xl: 3rem;  /* 48 */
+--space-3xl: 4rem;   /* 64 */ --space-4xl: 6rem;  /* 96 */
 ```
 
-- **Invariant:** space_within_group &lt; space_between_groups &lt; space_between_sections.
-- Use **gap** for siblings; avoid child margin math.
-- Never arbitrary px outside the scale.
-- Density dial: spacious (py large, 1–2 items/row) ↔ dense dashboard (8px rhythm, mono numbers).
+- Invariant: within_group &lt; between_groups &lt; between_sections (~1.5–2×).
+- Siblings: **`gap` only** — no child-margin column math.
+- No off-scale magic px. Fluid: `clamp(var(--space-lg), 4vw, var(--space-3xl))`.
 
-## Gestalt / hierarchy
+## Gestalt → hierarchy
 
-- Group with **proximity first**; cards/borders are a tax — earn them.
-- Squint test: one primary blob, then secondary, chrome last.
-- Adjacent hierarchy levels need ≥ **1.5×** size/weight difference (or clear weight+tracking pair).
+- Group with **proximity first**; cards/borders are a tax.
+- Squint: 1 dominant → secondary → chrome. One focal point.
+- Adjacent levels ≥ **1.5×** size/weight (or clear 400/700 pair).
 - Tools order: space → size → weight → color.
-- Max ~4 hierarchy levels.
+- Optical center ≈ 5–8% above geometric (modals/heroes).
+- Critical nav/list items: first or last, not mid-buried.
 
-## Composition
+## Composition core
 
-- Flex = 1D; Grid = 2D. Don't default Grid when Flex is enough.
-- Prefer `repeat(auto-fit, minmax(min(100%, 280px), 1fr))` for responsive grids.
-- Break **identical 3-card grids**; vary spans / mix non-card content.
-- Asymmetry when DESIGN_VARIANCE &gt; 4; centered OK for manifesto/auth.
-- Optical center ≈ 5–8% above geometric center (modals/heroes).
-- Section layout family appears **at most once** per page (landing).
-- Zigzag image/text: max **2 consecutive**; then break pattern.
-- App shells: height flows down (`h-full` chain); scrolling flex child needs **`min-h-0`**; fixed chrome `shrink-0`.
-- Hero (marketing): fits first viewport; headline ≤2 lines; subtext ≤20 words; CTA visible; top padding ≤ `pt-24`.
-- Measure body ≈ **45–75ch** (prefer &lt;80).
-- Full-height: `min-h-[100dvh]`, never `h-screen` alone.
-- Mobile: high-variance layouts collapse to single column; declare &lt;768 fallbacks.
-- Grid columns typical: 4 / 8 / 12; gutters 16–32; declare breakpoints.
+- Flex=1D, Grid=2D. Intrinsic: `repeat(auto-fit, minmax(min(100%, 280px), 1fr))`.
+- Break identical 3–6 card grids; never nest cards.
+- Body measure 45–75ch. ≤2 alignment types per section.
+- Full height: `min-h-[100dvh]` not lone `h-screen`.
+- Mobile &lt;768: declare collapse for every multi-col block.
+- Columns 4/8/12; gutters 16–32; prefer `@container` when the component owns width.
 
-## Z-index (semantic)
+## Shell (always if app chrome)
 
-```css
---z-dropdown: 10; --z-sticky: 20; --z-modal-backdrop: 30;
---z-modal: 40; --z-toast: 50; --z-tooltip: 60;
-```
+- Height down: `h-full` chain; scrolling child **`min-h-0`**; overflow axis **`min-w-0`**.
+- Chrome: `shrink-0`. Main: `min-width: 0`.
+- Details → [references/shell.md](references/shell.md).
 
-No `z-9999`.
+## Radii / z
 
-## Ban
+- Radius by role (input &lt; card &lt; modal). Nested: outer ≈ inner + gap.
+- z: dropdown 10 → sticky 20 → modal-backdrop 30 → modal 40 → toast 50 → tooltip 60. No 9999.
 
-- Equal spacing everywhere
-- Nested cards
-- Wrapping every section in a rounded card
-- Numbered eyebrows (`01 / About`) unless content is a real sequence
-- Eyebrow on every section (max ~1 per 3 sections)
-- Fake product UI from empty `div` rectangles
-- Sidebar full-dark by default (prefer subtle tint)
+## Global ban
+
+Equal spacing · nested cards · every section card-wrapped · icon+title+text card rows as default · monotone dashboards · numbered eyebrows · fake div “screenshots” · undeclared mobile collapse · flex `calc` columns · Grid-for-everything · `z-9999`
+
+## Pre-ship
+
+- [ ] Plan block existed and was followed
+- [ ] Correct recipe loaded for the surface
+- [ ] Squint = one focal point; spacing rhythm holds
+- [ ] Shell scroll OK if app chrome
+- [ ] Mobile collapse explicit
+- [ ] Surface-specific checklist in the recipe file passes
+
+References: ui-craft, impeccable/atelier, shadcn-layouts, interface-design, taste-skill, Vizro, Owl grid/spacing, DESIGN.md.
