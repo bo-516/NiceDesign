@@ -66,6 +66,7 @@ cp -R NiceDesign/skills/web-layout .cursor/skills/web-layout
 ```
 
 每个 skill 必须是「文件夹 + `SKILL.md`」，不要把文件摊平。
+`web-layout` 还带一个 `references/` 目录（landing / dashboard / shell 配方），`SKILL.md` 会按需加载，请整个文件夹一起拷贝。
 
 ### 5. 更新 / 卸载
 
@@ -82,7 +83,7 @@ npx skills remove web-layout
 | Skill | 覆盖内容 |
 |-------|----------|
 | [`web-color-depth`](skills/web-color-depth/SKILL.md) | 色板、OKLCH token、暗色模式、分层阴影与 Elevation |
-| [`web-layout`](skills/web-layout/SKILL.md) | 间距阶、栅格、层次、应用壳、构图禁令 |
+| [`web-layout`](skills/web-layout/SKILL.md) | 骨架选择（视口锁定 / 文档滚动）、滚动归属、间距阶、栅格、层次、应用壳；另带 `references/` 场景配方 |
 | [`web-interaction`](skills/web-interaction/SKILL.md) | 控件八态、表单、微反馈、CSS 动效预算 |
 | [`web-animation`](skills/web-animation/SKILL.md) | GSAP 优先：时间线、ScrollTrigger、React 清理、性能 |
 

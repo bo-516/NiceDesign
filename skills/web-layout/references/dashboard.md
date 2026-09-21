@@ -1,6 +1,20 @@
 # Dashboard / admin layout recipe
 
 Load with web-layout for dashboards, admin, analytics, dense product UI.
+Pair it with [shell.md](shell.md) — a dashboard is app chrome, so the frame decision comes first.
+
+## Fit decision (before the grid)
+
+| | One screen (`fixed`) | Scrolling board (`fixed` shell, scrolling main) |
+|---|---|---|
+| Use when | wall display, ops console, “everything at a glance” | many modules, exploration, drill-down |
+| Main region | `grid-template-rows: auto minmax(0,1fr)` — rows share leftover height | `overflow-auto`, modules stack |
+| Panels | `min-height: 0`, body scrolls inside | natural height is fine |
+| Charts | bounded row or `aspect-ratio` | fixed height per chart |
+
+Either way the **shell** is viewport-locked and the sidebar never scrolls away.
+Only the main region's behaviour differs. Never express “one screen” with panel
+`min-height` values — stacked minimums are additive and always overflow.
 
 ## Density defaults
 
@@ -21,6 +35,14 @@ Load with web-layout for dashboards, admin, analytics, dense product UI.
 - Filters: page-level vs container-level — don’t duplicate. Sticky filter bar only if scroll is long.
 - Sparklines OK on KPIs; chart type matches data (time → line/area; rank → bar). Avoid pie/3D.
 
+## Charts inside the frame
+
+- Every chart lives in a container with a decided height; the chart is `100%` of it.
+- A chart library default height (commonly 300px) × a few stacked panels is what
+  makes the right column taller than the viewport. Size containers, not charts.
+- Re-measure on container resize (`ResizeObserver` / the library's resize call),
+  and dispose on unmount — a chart that only sizes on mount is wrong after collapse.
+
 ## Chrome pairing
 
 - Use [shell.md](shell.md) for sidebar/header/scroll.
@@ -38,12 +60,15 @@ Load with web-layout for dashboards, admin, analytics, dense product UI.
 - 6 identical metric cards with same border accent
 - Equal padding everywhere (kills hierarchy)
 - Horizontal scroll of the whole app shell
+- Panel `min-height` stacks used to express a one-screen layout
 - Charts without adjacent context (label, period, delta)
 
 ## Dashboard pre-ship
 
+- [ ] Fit decision stated: one screen vs scrolling board
 - [ ] Density dial stated; not airy-marketing
 - [ ] ≥3 content types or deliberate single-focus
 - [ ] KPI/chart spans make sense; rectangles clean
+- [ ] Charts bounded; resize handled
 - [ ] Shell scroll + sidebar per shell.md
 - [ ] Skeletons match final layout

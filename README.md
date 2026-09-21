@@ -19,7 +19,7 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 | Skill | EN | 中文 |
 |-------|----|------|
 | [`web-color-depth`](skills/web-color-depth/SKILL.md) | Palettes, OKLCH tokens, dark mode, layered shadows / elevation | 色板、OKLCH token、暗色模式、分层阴影与 Elevation |
-| [`web-layout`](skills/web-layout/SKILL.md) | Spacing scale, grids, hierarchy, app shells, composition bans | 间距阶、栅格、层次、应用壳、构图禁令 |
+| [`web-layout`](skills/web-layout/SKILL.md) | Frame choice (viewport-locked vs document-scroll), scroll ownership, spacing scale, grids, hierarchy, app shells | 骨架选择（视口锁定 / 文档滚动）、滚动归属、间距阶、栅格、层次、应用壳 |
 | [`web-interaction`](skills/web-interaction/SKILL.md) | Control states, forms, micro-feedback, CSS motion budgets | 控件八态、表单、微反馈、CSS 动效预算 |
 | [`web-animation`](skills/web-animation/SKILL.md) | GSAP-first timelines, ScrollTrigger, React cleanup, perf | GSAP 优先：时间线、ScrollTrigger、React 清理、性能 |
 
