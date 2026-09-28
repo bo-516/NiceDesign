@@ -72,7 +72,7 @@ cp -R NiceDesign/skills/engineering/wish .cursor/skills/wish
 仓库里的 `web/`、`engineering/` 只是分类目录。拷贝时拷具体的 skill 文件夹，不要整个分类目录一起拷：Agent 只扫描 skills 目录下一层，`.cursor/skills/web/web-layout/` 这样多套一层就识别不到了。
 
 每个 skill 必须是「文件夹 + `SKILL.md`」，不要把文件摊平。
-`web-layout` 带一个 `references/` 目录（landing / dashboard / shell 配方），`wish` 带 `references/template.md`（方案文档骨架），`SKILL.md` 会按需加载，请整个文件夹一起拷贝。
+`web-layout` 带一个 `references/` 目录（landing / dashboard / shell 配方），`wish` 带 `references/template.md`（方案文档骨架）和 `references/example.md`（精简档样例），`SKILL.md` 会按需加载，请整个文件夹一起拷贝。
 
 ### 5. 更新 / 卸载
 
@@ -101,7 +101,7 @@ npx skills remove web-layout
 
 | Skill | 覆盖内容 |
 |-------|----------|
-| [`wish`](skills/engineering/wish/SKILL.md) | 一句话需求 → 零上下文也能照做的开发方案：背景、目标 / 非目标、成品形态（线框 / 示例 I/O）、需求、技术设计、实施步骤、测试验收、风险；另带 `references/template.md` 文档骨架 |
+| [`wish`](skills/engineering/wish/SKILL.md) | 一句话需求 → 零上下文也能照做的开发方案：背景、目标 / 非目标、成品形态（线框 / 示例 I/O）、需求、技术设计、实施步骤、测试验收、风险；小任务自动用精简档；另带 `references/template.md` 骨架和 `references/example.md` 样例 |
 
 用法：
 
@@ -110,9 +110,10 @@ npx skills remove web-layout
 ```
 
 1. 先读仓库（README、依赖清单、目录结构、相关模块、已有 `docs/`），代码能回答的不问。
-2. 信息不够时反问：每轮最多 4 个问题、最多 2 轮，每题 3–5 个选项，推荐项排第一；也可以直接回答「你定」。
-3. 写入 `docs/YY-MM-DD-<task>.md`，例如 `docs/26-09-23-export-orders-csv.md`；文档语言跟随你的输入。
-4. 之后的补充说明会更新同一个文件（Revision +1，并记一行 Changelog），不会另起新文件。
+2. 目标默认从需求和代码推断，受众或动机不清时才问。信息不够时反问：每轮最多 4 个问题、最多 2 轮，每题 3–5 个选项，推荐项排第一；也可以直接回答「你定」。
+3. 按规模分档：预估不到半天或改动少于 3 个文件用精简档（成品形态、需求、技术设计合成一节，上线只留一行）；涉及数据迁移、鉴权、支付或公开 API 的一律用完整档。
+4. 写入 `docs/YY-MM-DD-<slug>.md`，例如 `docs/26-09-23-export-orders-csv.md`；文档语言跟随你的输入。
+5. 之后的补充说明会更新同一个文件（Revision +1，并记一行 Changelog），不会另起新文件。
 
 只出方案，不写代码。
 

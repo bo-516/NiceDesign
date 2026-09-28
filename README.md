@@ -29,7 +29,7 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 
 | Skill | EN | 中文 |
 |-------|----|------|
-| [`wish`](skills/engineering/wish/SKILL.md) | `/wish <task>` → reads the repo, asks up to 4 multiple-choice questions when the request is thin, writes a dev plan a zero-context reader can build from to `docs/YY-MM-DD-<task>.md` | `/wish <需求>` → 先读仓库，信息不够时带 3–5 个选项反问，在 `docs/YY-MM-DD-<task>.md` 写出零上下文也能照做的开发方案 |
+| [`wish`](skills/engineering/wish/SKILL.md) | `/wish <task>` → reads the repo, asks up to 4 multiple-choice questions when the request is thin, writes a dev plan a zero-context reader can build from to `docs/YY-MM-DD-<slug>.md` | `/wish <需求>` → 先读仓库，信息不够时带 3–5 个选项反问，在 `docs/YY-MM-DD-<slug>.md` 写出零上下文也能照做的开发方案 |
 
 ```text
 /wish 给订单列表加导出 CSV

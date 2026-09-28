@@ -4,7 +4,11 @@ Load when writing the file. Copy everything below the line.
 
 - Fill every section; delete the `<!-- -->` guidance as you go.
 - A section that doesn't apply stays, with `N/A — <reason>`. In §5 keep only the blocks that apply (at least one).
-- Translate headings into the user's language; code, paths, and identifiers stay verbatim.
+- **Lite** tier: §5–7 become one `## 5. Design` — the §5 blocks that apply, the FR table (NFRs only if any),
+  the file map, then key logic / edge cases; other §7 blocks only when they carry a decision. §10 is one
+  line. Later sections move up (§8 → §6). Shape and density: [example.md](example.md).
+- Translate headings and prose into the user's language; header keys, `Status` values, code, paths, and
+  identifiers stay verbatim.
 - IDs (G-, FR-, NFR-, AC-, A-, Q-) are stable across revisions — never renumber, strike through instead.
 
 ---
@@ -17,6 +21,7 @@ Load when writing the file. Copy everything below the line.
 | Status | Draft |
 | Revision | 1 |
 | Repo | `<name>` @ `<branch>` (`<short sha>`) |
+| Estimate | ~<hours> · <n> files · Lite / Full |
 | Related | <other plans in docs/, issues, PRs — or none> |
 
 <!-- Status: Draft → Confirmed when the user approves; Superseded (link the successor) when replaced. -->
@@ -88,6 +93,8 @@ Load when writing the file. Copy everything below the line.
 **Data / infra** — before → after: schema, topology, or pipeline.
 
 **Bug** — repro steps, expected vs actual.
+
+**Refactor** — the caller-facing contract that must not change, then a before → after table per concern.
 
 ## 6. Requirements
 
