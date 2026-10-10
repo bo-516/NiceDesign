@@ -6,7 +6,7 @@ Load when writing the file. Copy everything below the line.
 - A section that doesn't apply stays, with `N/A — <reason>`. In §5 keep only the blocks that apply (at least one).
 - **Lite** tier: §5–7 become one `## 5. Design` — the §5 blocks that apply, the FR table (NFRs only if any),
   the file map, then key logic / edge cases; other §7 blocks only when they carry a decision. §10 is one
-  line. Later sections move up (§8 → §6). Shape and density: [example.md](example.md).
+  line. Later sections move up (§8 → §6). Shape and density: [ai-example.md](ai-example.md).
 - Translate headings and prose into the user's language; header keys, `Status` values, code, paths, and
   identifiers stay verbatim.
 - IDs (G-, FR-, NFR-, AC-, A-, Q-) are stable across revisions — never renumber, strike through instead.

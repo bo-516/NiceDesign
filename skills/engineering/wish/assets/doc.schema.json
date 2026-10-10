@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human-facing plan",
+  "description": "Data for template.html. Flat on purpose: top-level fields, one ordered list of blocks, one map of terms; no object sits deeper than a block. Text fields take three inline marks: **bold**, `code`, [[term]] or [[shown text|term]]. Plain fields (headings, names, labels, `when`, columns, steps) take no marks. No HTML anywhere; it is escaped. The main text assumes `reader`; what that reader may not know goes into `terms`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "status", "date", "reader", "summary", "blocks"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "lang": {
+      "enum": ["zh-CN", "en"],
+      "default": "zh-CN",
+      "description": "Language of the page's own labels: zh-CN for Chinese content, en for anything else. Write the content in the user's language."
+    },
+    "title": { "$ref": "#/$defs/plain", "maxLength": 60, "description": "What gets built, as a noun phrase." },
+    "kind": { "$ref": "#/$defs/plain", "maxLength": 16, "description": "Document kind in the top bar. Defaults to 开发方案 / Plan." },
+    "project": { "$ref": "#/$defs/plain", "maxLength": 40, "description": "Repo or product name in the top bar." },
+    "status": { "enum": ["draft", "review", "approved"], "description": "review while waiting for decisions; approved once the user confirms." },
+    "revision": { "type": "integer", "minimum": 1, "default": 1 },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "YYYY-MM-DD." },
+    "reader": {
+      "$ref": "#/$defs/plain",
+      "maxLength": 80,
+      "description": "Who the main text is written for. Default: smart, knows the domain, was not in this conversation, does not know this code. Infer it from the request; never ask."
+    },
+    "summary": {
+      "$ref": "#/$defs/text",
+      "maxLength": 280,
+      "description": "The conclusion in 1–3 sentences: what gets built, its scope, its cost. Not background."
+    },
+    "decisions": {
+      "type": "array",
+      "maxItems": 4,
+      "description": "What the reader has to decide. Omit when nothing is open. Each carries a recommendation; no reply means the recommendation is taken.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question", "options"],
+        "properties": {
+          "question": { "$ref": "#/$defs/text" },
+          "options": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": { "$ref": "#/$defs/text" },
+            "description": "The first option is the recommendation. Each is \"option | cost\"; the cost is optional, e.g. \"转为后台任务，完成后站内通知 | +1 天\". Marks are allowed in the option text."
+          },
+          "why": { "$ref": "#/$defs/text", "maxLength": 200, "description": "Why the recommendation, backed by a number or a fact. If this decision interacts with another, say how here." }
+        }
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The body, in reading order. An h2 starts a section: it sticks under the top bar while its section is on screen and becomes a contents entry; h3s become sub-entries. Consecutive option, row, step or flow blocks merge into one table, list or diagram.",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/h2" },
+          { "$ref": "#/$defs/h3" },
+          { "$ref": "#/$defs/p" },
+          { "$ref": "#/$defs/list" },
+          { "$ref": "#/$defs/table" },
+          { "$ref": "#/$defs/option" },
+          { "$ref": "#/$defs/row" },
+          { "$ref": "#/$defs/step" },
+          { "$ref": "#/$defs/flow" },
+          { "$ref": "#/$defs/check" },
+          { "$ref": "#/$defs/callout" },
+          { "$ref": "#/$defs/code" }
+        ]
+      }
+    },
+    "terms": {
+      "type": "object",
+      "maxProperties": 8,
+      "description": "Term → explanation (1–3 plain sentences), shown as a side note beside the line that uses it. Mark the term's first use as [[term]], reading in this order: summary, then decisions (question, options, why), then blocks. Every key must be marked and every mark must have a key. Only explain what the reader may not know.",
+      "propertyNames": { "minLength": 1, "maxLength": 20, "not": { "pattern": "[\\[\\]|]" } },
+      "additionalProperties": { "$ref": "#/$defs/text", "maxLength": 200 }
+    },
+    "changelog": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plain" },
+      "description": "One line per revision, oldest first, e.g. \"2026-10-10 初稿\". The footer shows the last line."
+    }
+  },
+  "$defs": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Text with **bold**, `code`, [[term]] / [[shown text|term]]."
+    },
+    "plain": {
+      "type": "string",
+      "minLength": 1,
+      "not": { "pattern": "\\[\\[" },
+      "description": "Plain text: no [[term]] marks; ** and ` show literally."
+    },
+    "h2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "h2" },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Stable anchor for links, e.g. \"risks\". Optional; \"decide\" is reserved."
+        },
+        "text": { "$ref": "#/$defs/plain", "maxLength": 24 }
+      }
+    },
+    "h3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "h3" },
+        "text": { "$ref": "#/$defs/plain", "maxLength": 32 }
+      }
+    },
+    "p": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "p" },
+        "text": { "$ref": "#/$defs/text" }
+      }
+    },
+    "list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "items"],
+      "description": "Bullets, or numbered steps a user takes (ordered). For what is out of scope, one item per exclusion: \"what: why not now\".",
+      "properties": {
+        "type": { "const": "list" },
+        "ordered": { "type": "boolean", "default": false },
+        "items": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/text" } }
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "columns", "rows"],
+      "description": "A small table: sample data, a side-by-side comparison of two things, a mapping. Numeric columns right-align on their own. With `file`, it is drawn as a preview of that file.",
+      "properties": {
+        "type": { "const": "table" },
+        "columns": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/plain" } },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/text" },
+          "description": "One string per row, cells separated by \" | \"; write a literal pipe as \\|. Same number of cells as columns. Cells take marks."
+        },
+        "file": { "$ref": "#/$defs/plain", "description": "File name, when the table shows the contents of a file." },
+        "fileTag": { "$ref": "#/$defs/plain", "maxLength": 16, "description": "Short note on the file's header, e.g. 用 Excel 打开." },
+        "caption": { "$ref": "#/$defs/text" }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "name", "how", "chosen", "reason"],
+      "description": "One row of an options-considered table: which way to build it. Consecutive option blocks form one table; exactly one is chosen. For comparing two things that are not alternatives (two vendors' behaviour), use a table.",
+      "properties": {
+        "type": { "const": "option" },
+        "name": { "$ref": "#/$defs/plain", "maxLength": 16 },
+        "how": { "$ref": "#/$defs/text" },
+        "chosen": { "type": "boolean" },
+        "reason": { "$ref": "#/$defs/text", "description": "Chosen: the scope it covers. Rejected: the deal-breaker, in one line." }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "label", "text"],
+      "description": "A label + text pair, for risks, costs, constraints. Consecutive rows form one list.",
+      "properties": {
+        "type": { "const": "row" },
+        "label": { "$ref": "#/$defs/plain", "maxLength": 12 },
+        "text": { "$ref": "#/$defs/text" }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "when", "what"],
+      "description": "One step of the rollout plan. Consecutive steps form one list. For steps a user takes in the product, use an ordered list.",
+      "properties": {
+        "type": { "const": "step" },
+        "when": { "$ref": "#/$defs/plain", "maxLength": 12, "description": "e.g. 第 1 天, 第 1–2 天, Week 2." },
+        "what": { "$ref": "#/$defs/text" },
+        "done": { "$ref": "#/$defs/text", "description": "How anyone can tell the step is finished. The page adds the \"done when\" label." }
+      }
+    },
+    "flow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "steps"],
+      "description": "One path through states or stages, drawn as chips joined by arrows. Consecutive flows stack into one diagram, one path each; branch by writing another flow.",
+      "properties": {
+        "type": { "const": "flow" },
+        "label": { "$ref": "#/$defs/plain", "maxLength": 8, "description": "What the path belongs to, e.g. 批次 / Batch. Optional." },
+        "steps": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "$ref": "#/$defs/plain", "maxLength": 16 } },
+        "note": { "$ref": "#/$defs/text", "maxLength": 120, "description": "When this path happens, in one line." }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "question", "answer"],
+      "description": "A self-check right after the passage it tests; the answer stays hidden until clicked. Aim at the likeliest misreading, not at recall. At most 4 per document, often fewer. If the answer needs a long explanation, fix the passage instead.",
+      "properties": {
+        "type": { "const": "check" },
+        "question": { "$ref": "#/$defs/text" },
+        "answer": { "$ref": "#/$defs/text", "maxLength": 120, "description": "The correct answer in one sentence; shown in bold." },
+        "detail": { "$ref": "#/$defs/text", "maxLength": 200, "description": "Why the intuitive answer is wrong, in at most two sentences." }
+      }
+    },
+    "callout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "description": "At most one per section. warn: something to watch or that can bite at rollout. info: a cross-reference or roll-up, e.g. how each decision moves the estimate.",
+      "properties": {
+        "type": { "const": "callout" },
+        "tone": { "enum": ["info", "warn"], "default": "info" },
+        "text": { "$ref": "#/$defs/text" }
+      }
+    },
+    "code": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "description": "Literal code, a command, or a payload. Not for diagrams; use flow.",
+      "properties": {
+        "type": { "const": "code" },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

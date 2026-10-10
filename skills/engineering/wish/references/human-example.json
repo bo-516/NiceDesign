@@ -1,0 +1,102 @@
+{
+  "$schema": "../assets/doc.schema.json",
+  "lang": "en",
+  "title": "Export the order list to CSV",
+  "kind": "Plan",
+  "project": "shop-admin",
+  "status": "review",
+  "revision": 1,
+  "date": "2026-10-10",
+  "reader": "Engineers who know the order domain but missed this discussion",
+  "summary": "Add an Export button to the order list that exports **every order matching the current filter**. Up to 50,000 rows download directly; larger exports run as a [[background job]] and notify when done. About 3 working days, no API changes.",
+  "decisions": [
+    {
+      "question": "What happens to exports over 50,000 rows?",
+      "options": [
+        "Run them as a background job and notify when done | +1 day",
+        "Refuse and ask the user to narrow the filter | +0"
+      ],
+      "why": "Ops reconciles about 80,000 rows each month. Refusing means splitting every monthly export in two by date and merging the files by hand."
+    },
+    {
+      "question": "Should exports write an [[audit log]]?",
+      "options": [
+        "Yes, kept for 180 days | +0.5 day",
+        "No | +0"
+      ],
+      "why": "Files carry customer phone numbers, even when [[masked]]. If a file leaks, nothing else tells us who exported it."
+    }
+  ],
+  "blocks": [
+    { "type": "h2", "id": "why", "text": "Why" },
+    { "type": "p", "text": "Ops pulls orders into Excel every week to reconcile. The list has no export, so an engineer runs SQL by hand: twice a week on average, half a day's wait each time, and three times last month it slipped to the next day." },
+    { "type": "p", "text": "Once this ships, Ops exports on their own and engineers drop out of the loop." },
+
+    { "type": "h2", "id": "look", "text": "What it looks like" },
+    { "type": "p", "text": "The button sits at the right of the filter bar, next to Reset. After a click:" },
+    { "type": "list", "items": [
+      "Up to 50,000 rows: the download starts right away; the file name carries the export time.",
+      "Over 50,000 rows: a notice says the export moved to the background; the user can keep working elsewhere."
+    ] },
+    {
+      "type": "table",
+      "file": "orders_2026-10-10_1432.csv",
+      "fileTag": "Opens in Excel",
+      "columns": ["Order", "Placed at", "Customer", "Phone", "Amount", "Status"],
+      "rows": [
+        "SO20261008-0142 | 2026-10-08 14:32 | W** | 138****5678 | 268.00 | Shipped",
+        "SO20261008-0143 | 2026-10-08 14:35 | L** | 159****0021 | 1,024.50 | Unpaid"
+      ],
+      "caption": "Phones show only the first 3 and last 4 digits; names show only the initial."
+    },
+    { "type": "h3", "text": "Out of scope" },
+    { "type": "list", "items": [
+      "Excel (`.xlsx`) output: Excel already opens CSV.",
+      "Scheduled exports: revisit after Ops has used this for a while.",
+      "Choosing columns: nobody has asked yet."
+    ] },
+    {
+      "type": "check",
+      "question": "The list is filtered to \"This month\" and shows 20 rows on the current page. How many rows does the exported file have?",
+      "answer": "Every order this month, not just the 20 on screen.",
+      "detail": "Export follows the filter, not the pagination. 3,200 orders this month means 3,200 rows in the file."
+    },
+
+    { "type": "h2", "id": "how", "text": "How it works" },
+    { "type": "p", "text": "The backend runs the filtered query as a [[streaming]] export: it writes rows as it reads them, and the browser saves them as they arrive. 50,000 rows take about the same memory as 50, and nothing waits long enough to time out." },
+    { "type": "flow", "label": "≤ 50k", "steps": ["Click Export", "Stream rows", "File saved"] },
+    { "type": "flow", "label": "> 50k", "steps": ["Click Export", "Job queued", "Notification", "Download"], "note": "The download link stays valid for 24 hours." },
+    { "type": "p", "text": "The file starts with a [[BOM]]; without it Excel shows Chinese text as gibberish." },
+    { "type": "h3", "text": "Options considered" },
+    { "type": "option", "name": "Build in browser", "how": "The page joins the loaded rows into a CSV", "chosen": false, "reason": "Only sees the current page; large lists freeze the tab" },
+    { "type": "option", "name": "Server stream", "how": "The server writes rows as it reads them; the browser downloads", "chosen": true, "reason": "Up to 50,000 rows" },
+    { "type": "option", "name": "Always a job", "how": "Every export is queued, then notified", "chosen": false, "reason": "A 30-row export would wait for a notification too" },
+    {
+      "type": "check",
+      "question": "An export takes 20 seconds and an order is cancelled meanwhile. What status does that order have in the file?",
+      "answer": "It depends on whether the export read it before the cancel.",
+      "detail": "A streaming export is not a snapshot, so changes made during it may partly land in the file. Ops reconciles against the start time in the file name."
+    },
+
+    { "type": "h2", "id": "risks", "text": "Risks and costs" },
+    { "type": "row", "label": "DB load", "text": "Large exports hold the database for a while. Queries run on a [[read replica]], so checkout is unaffected; one export per person at a time." },
+    { "type": "row", "label": "Privacy", "text": "Files contain phone numbers. Masked by default; full numbers need the Customer data permission." },
+    { "type": "row", "label": "Lag", "text": "The replica trails the primary, usually by under a second. A true snapshot would cost 2 more days; not this time." },
+    { "type": "callout", "tone": "warn", "text": "Watch replica lag in launch week. Past 5 seconds, exports look older than the list on screen." },
+
+    { "type": "h2", "id": "plan", "text": "Rollout" },
+    { "type": "step", "when": "Day 1", "what": "Streaming export, BOM, button", "done": "50,000 rows download within 30 s and open in Excel with readable Chinese" },
+    { "type": "step", "when": "Day 2", "what": "Background job and notification", "done": "An 80,000-row export notifies, and its link works for 24 hours" },
+    { "type": "step", "when": "Day 3", "what": "Masking, permissions, audit log, end-to-end test", "done": "An account without the Customer data permission gets masked phones" },
+    { "type": "callout", "text": "Refusing large exports (decision 1) drops day 2, for 2 days in total. Skipping the audit log (decision 2) saves another half day." }
+  ],
+  "terms": {
+    "background job": "The click returns at once and the export waits in a server queue. When it finishes, an in-app notification links to the file for 24 hours.",
+    "audit log": "A record of who exported, when, with which filter, and how many rows. Append-only.",
+    "masked": "Partly hidden before display, e.g. a phone number shown as 138****5678.",
+    "streaming": "Read a batch, write it, send it, repeat, instead of holding every row in memory first. The download starts almost at once.",
+    "BOM": "Three invisible bytes at the start of the file. Excel uses them to detect UTF-8; without them Chinese text turns to gibberish.",
+    "read replica": "A live copy of the main database that only serves reads. Heavy queries run there so orders and payments stay fast."
+  },
+  "changelog": ["2026-10-10 First draft"]
+}

@@ -29,11 +29,19 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 
 | Skill | EN | 中文 |
 |-------|----|------|
-| [`wish`](skills/engineering/wish/SKILL.md) | `/wish <task>` → reads the repo, asks up to 4 multiple-choice questions when the request is thin, writes a dev plan a zero-context reader can build from to `docs/YY-MM-DD-<slug>.md` | `/wish <需求>` → 先读仓库，信息不够时带 3–5 个选项反问，在 `docs/YY-MM-DD-<slug>.md` 写出零上下文也能照做的开发方案 |
+| [`wish`](skills/engineering/wish/SKILL.md) | `/wish <task>` → reads the repo, asks up to 4 multiple-choice questions when the request is thin, then writes a dev plan. Default: a page for people — single-file HTML rendered from JSON, with a decisions block, side notes for terms, and hidden-answer self-checks. Asked for the AI form: a Markdown plan a cold reader can build from | `/wish <需求>` → 先读仓库，信息不够时带 3–5 个选项反问，再写开发方案。默认写给人看：由 JSON 渲染的单文件 HTML，带待决事项、术语边注和点开才看答案的自检题；要求给 AI 看时，写零上下文也能照做的 Markdown 方案 |
+| [`wish2human`](skills/engineering/wish2human/SKILL.md) | `/wish2human <task>` → `wish`, people form, no mode detection → `docs/YY-MM-DD-<slug>.html` (+ `.json`) | `/wish2human <需求>` → 固定写给人看的版本 |
+| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | `/wish2ai <task>` → `wish`, AI form, no mode detection → `docs/YY-MM-DD-<slug>.md` | `/wish2ai <需求>` → 固定写给 AI 照做的版本 |
+
+`wish2human` and `wish2ai` are entry points into `wish`; install `wish` alongside them.
+`wish2human` / `wish2ai` 只是 `wish` 的入口，需要和 `wish` 一起安装。
 
 ```text
 /wish 给订单列表加导出 CSV
 → 导出范围？ A. 当前筛选结果 (Recommended)  B. 全部订单  C. 勾选的行 …
+→ docs/26-09-23-export-orders-csv.html  (+ .json)
+
+/wish2ai 给订单列表加导出 CSV
 → docs/26-09-23-export-orders-csv.md
 ```
 

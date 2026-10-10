@@ -20,7 +20,7 @@ npx skills add https://github.com/bo-516/NiceDesign
 npx skills add bo-516/NiceDesign
 ```
 
-CLI 会列出全部五个 skill（Web UI 4 个 + 工程化 1 个），询问要装到哪些 Agent（Cursor、Claude Code、Codex 等），然后写入对应目录。
+CLI 会列出全部七个 skill（Web UI 4 个 + 工程化 3 个），询问要装到哪些 Agent（Cursor、Claude Code、Codex 等），然后写入对应目录。
 
 ### 2. 只装某一个 Skill
 
@@ -30,9 +30,10 @@ npx skills add bo-516/NiceDesign --skill web-layout
 npx skills add bo-516/NiceDesign --skill web-interaction
 npx skills add bo-516/NiceDesign --skill web-animation
 npx skills add bo-516/NiceDesign --skill wish
+npx skills add bo-516/NiceDesign --skill wish --skill wish2human --skill wish2ai
 ```
 
-`--skill` 后面写 skill 名即可，不用带分类目录。
+`--skill` 后面写 skill 名即可，不用带分类目录。`wish2human`、`wish2ai` 只是 `wish` 的入口，要和 `wish` 一起装。
 
 ### 3. 项目级 vs 全局
 
@@ -67,12 +68,14 @@ git clone https://github.com/bo-516/NiceDesign.git
 ```bash
 cp -R NiceDesign/skills/web/web-layout .cursor/skills/web-layout
 cp -R NiceDesign/skills/engineering/wish .cursor/skills/wish
+cp -R NiceDesign/skills/engineering/wish2human .cursor/skills/wish2human
+cp -R NiceDesign/skills/engineering/wish2ai .cursor/skills/wish2ai
 ```
 
 仓库里的 `web/`、`engineering/` 只是分类目录。拷贝时拷具体的 skill 文件夹，不要整个分类目录一起拷：Agent 只扫描 skills 目录下一层，`.cursor/skills/web/web-layout/` 这样多套一层就识别不到了。
 
 每个 skill 必须是「文件夹 + `SKILL.md`」，不要把文件摊平。
-`web-layout` 带一个 `references/` 目录（landing / dashboard / shell 配方），`wish` 带 `references/template.md`（方案文档骨架）和 `references/example.md`（精简档样例），`SKILL.md` 会按需加载，请整个文件夹一起拷贝。
+`web-layout` 带一个 `references/` 目录（landing / dashboard / shell 配方），`wish` 带 `references/`（两种模式的写作规则、Markdown 骨架和两份样例）和 `assets/`（HTML 模板、JSON Schema、`build.py`），`SKILL.md` 会按需加载，请整个文件夹一起拷贝。
 
 ### 5. 更新 / 卸载
 
@@ -101,19 +104,33 @@ npx skills remove web-layout
 
 | Skill | 覆盖内容 |
 |-------|----------|
-| [`wish`](skills/engineering/wish/SKILL.md) | 一句话需求 → 零上下文也能照做的开发方案：背景、目标 / 非目标、成品形态（线框 / 示例 I/O）、需求、技术设计、实施步骤、测试验收、风险；小任务自动用精简档；另带 `references/template.md` 骨架和 `references/example.md` 样例 |
+| [`wish`](skills/engineering/wish/SKILL.md) | 一句话需求 → 开发方案。默认写给人看；要求「给 AI 看」时写给 AI 照做 |
+| [`wish2human`](skills/engineering/wish2human/SKILL.md) | 固定写给人看：由 JSON 渲染的单文件 HTML |
+| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 固定写给 AI 照做：零上下文也能照着实现的 Markdown 方案 |
 
 用法：
 
 ```text
-/wish 给订单列表加导出 CSV
+/wish 给订单列表加导出 CSV          # 默认：给人看
+/wish 给订单列表加导出 CSV，给 AI 看  # 切到给 AI 的版本
+/wish2human 给订单列表加导出 CSV
+/wish2ai 给订单列表加导出 CSV
 ```
 
+两种模式共用前半段：
+
 1. 先读仓库（README、依赖清单、目录结构、相关模块、已有 `docs/`），代码能回答的不问。
-2. 目标默认从需求和代码推断，受众或动机不清时才问。信息不够时反问：每轮最多 4 个问题、最多 2 轮，每题 3–5 个选项，推荐项排第一；也可以直接回答「你定」。
-3. 按规模分档：预估不到半天或改动少于 3 个文件用精简档（成品形态、需求、技术设计合成一节，上线只留一行）；涉及数据迁移、鉴权、支付或公开 API 的一律用完整档。
-4. 写入 `docs/YY-MM-DD-<slug>.md`，例如 `docs/26-09-23-export-orders-csv.md`；文档语言跟随你的输入。
-5. 之后的补充说明会更新同一个文件（Revision +1，并记一行 Changelog），不会另起新文件。
+2. 信息不够时只问内容，不问形式（给谁看、写多深、用哪种模式都有默认值）：每轮最多 4 个问题、最多 2 轮，每题 3–5 个选项，推荐项排第一；也可以直接回答「你定」。
+3. 文档语言跟随你的输入；之后的补充说明会更新同一份文档（修订号 +1，记一行变更），不会另起新文件。
+
+**给人看（默认）**：AI 只写 JSON（按 `assets/doc.schema.json`），`build.py` 校验后嵌进模板，生成 `docs/YY-MM-DD-<slug>.html`，JSON 源文件放在旁边。页面：
+
+- 结论放最前，「需要你决定」的事每项都带建议和成本。
+- 术语在右侧边注里解释，和正文对齐；窄屏点开看。
+- 自检题点击才显示答案，专门针对最容易读错的地方。
+- 可收起的目录带阅读进度；可调字号、行距、字距、字体；浅色 / 深色跟随系统，也可手动切换。
+
+**给 AI 照做**：写入 `docs/YY-MM-DD-<slug>.md`。按规模分档：预估不到半天或改动少于 3 个文件用精简档；涉及数据迁移、鉴权、支付或公开 API 的一律用完整档。
 
 只出方案，不写代码。
 
