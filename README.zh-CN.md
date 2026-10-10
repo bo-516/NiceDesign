@@ -2,7 +2,7 @@
 
 # NiceDesign
 
-精简、规则向的 Agent Skills：Web UI（颜色与深度、布局、交互、GSAP 优先的动画）+ 工程化（开发方案）。少废话，多规则。
+精简、规则向的 Agent Skills：Web UI（颜色与深度、布局、交互、GSAP 优先的动画）+ 工程化（动手前先写方案）。少废话，多规则。
 
 ## 如何下载 / 安装 Skill
 
@@ -104,22 +104,23 @@ npx skills remove web-layout
 
 | Skill | 覆盖内容 |
 |-------|----------|
-| [`wish`](skills/engineering/wish/SKILL.md) | 一句话需求 → 开发方案。默认写给人看；要求「给 AI 看」时写给 AI 照做 |
+| [`wish`](skills/engineering/wish/SKILL.md) | 一句话需求 → 方案。开发、产品、设计、运营、市场都能用。默认写给人看；要求「给 AI 看」时写成交给 AI 执行的版本 |
 | [`wish2human`](skills/engineering/wish2human/SKILL.md) | 固定写给人看：由 JSON 渲染的单文件 HTML |
-| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 固定写给 AI 照做：零上下文也能照着实现的 Markdown 方案 |
+| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 固定写交给 AI 执行：零上下文也能照着做的 Markdown 方案 |
 
 用法：
 
 ```text
-/wish 给订单列表加导出 CSV          # 默认：给人看
-/wish 给订单列表加导出 CSV，给 AI 看  # 切到给 AI 的版本
-/wish2human 给订单列表加导出 CSV
+/wish 给订单列表加导出 CSV            # 默认：给人看
+/wish 双十一会员召回活动              # 不写代码的事也行
+/wish 给订单列表加导出 CSV，交给 AI 做  # 切到给 AI 的版本
+/wish2human 新人入职流程改版
 /wish2ai 给订单列表加导出 CSV
 ```
 
 两种模式共用前半段：
 
-1. 先读仓库（README、依赖清单、目录结构、相关模块、已有 `docs/`），代码能回答的不问。
+1. 先读上下文：在代码仓库里读 README、依赖清单、目录结构、相关模块和已有 `docs/`；不在仓库里就读你指给它的文件、链接和笔记。材料能回答的不问。
 2. 信息不够时只问内容，不问形式（给谁看、写多深、用哪种模式都有默认值）：每轮最多 4 个问题、最多 2 轮，每题 3–5 个选项，推荐项排第一；也可以直接回答「你定」。
 3. 文档语言跟随你的输入；之后的补充说明会更新同一份文档（修订号 +1，记一行变更），不会另起新文件。
 
@@ -130,14 +131,14 @@ npx skills remove web-layout
 - 自检题点击才显示答案，专门针对最容易读错的地方。
 - 可收起的目录带阅读进度；可调字号、行距、字距、字体；浅色 / 深色跟随系统，也可手动切换。
 
-**给 AI 照做**：写入 `docs/YY-MM-DD-<slug>.md`。按规模分档：预估不到半天或改动少于 3 个文件用精简档；涉及数据迁移、鉴权、支付或公开 API 的一律用完整档。
+**交给 AI 执行**：写入 `docs/YY-MM-DD-<slug>.md`。骨架按软件开发设计，其他类型的工作保留主干（结论、目标、成品、步骤和完成标志、验收、风险），用不上的部分标 N/A。软件任务按规模分档：预估不到半天或改动少于 3 个文件用精简档；涉及数据迁移、鉴权、支付或公开 API 的一律用完整档。
 
-只出方案，不写代码。
+只出方案，不动手做：不写代码、不发消息、不发布。
 
 ## 理念
 
 - **规则重于长文** — 控制上下文体积；交付可执行决策，而不是流程表演。
-- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如开发方案。
+- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如方案。
 - Web 类从社区与官方来源提炼压缩而成（含 frontend-design、ui-craft、taste-skill、impeccable、greensock/gsap-skills、DESIGN.md 等）。
 
 ## 许可

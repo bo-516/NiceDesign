@@ -1,7 +1,7 @@
 # Human mode — a page people read
 
 Load in `human` mode. The reader is a person whose attention is the scarce thing: they review, decide,
-or need to understand, and will not build from this. Say less rather than more. **Write JSON only,
+or need to understand, and will not carry it out themselves. Say less rather than more. **Write JSON only,
 never HTML**; the template renders it.
 
 | File | Role |
@@ -12,8 +12,9 @@ never HTML**; the template renders it.
 
 ## Reader
 
-- Default: smart, knows the domain, was not in this conversation, doesn't know this code. Adjust from
-  signals in the request or repo ("给老板看", "for the new hire"); never ask. Write it into `reader`.
+- Default: smart, knows the domain, was not in this conversation, doesn't know the details (code,
+  systems, earlier threads). Adjust from signals in the request or context ("给老板看", "for the new
+  hire"); never ask. Write it into `reader`.
 - The main text is written for that reader and stays terse. What they may not know goes into `terms`
   (side notes beside the line), marked `[[term]]` at its first use.
 - What they would misread without noticing goes into a `check` (answer hidden until clicked), right
@@ -23,17 +24,17 @@ never HTML**; the template renders it.
 
 Unless the task clearly needs another order:
 
-1. `summary` — the conclusion: what gets built, the scope, the cost.
+1. `summary` — the conclusion: what gets done, the scope, the cost.
 2. `decisions` — what the reader must decide; the first option is the recommendation, with its cost.
    Omit when nothing is open.
 3. `h2` sections, titled in the user's language: why → what it looks like (what's out included) → how
-   (options considered included) → risks and costs → rollout.
+   (options considered included) → risks and costs → steps and timeline.
 
 ## Writing
 
 - Every block carries a fact, a number, or a decision. Numbers over adjectives.
 - Decisions carry their reason; rejected options get one line.
-- The reader has the repo: name the file instead of restating what it says.
+- Point to the source (file, doc, link) instead of restating what it says.
 - Usually fewer than the caps: `terms` ≤ 8, `check` ≤ 4, `decisions` ≤ 4.
 - Aim for ≤ 8 minutes of reading (build.py prints the estimate). Longer → cut detail or split the task.
 - `lang`: `zh-CN` for Chinese content, `en` for anything else. Omit `$schema` in docs/.

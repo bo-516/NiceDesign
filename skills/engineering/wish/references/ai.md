@@ -1,8 +1,11 @@
-# AI mode — a plan a stranger can build from
+# AI mode — a plan a stranger can carry out
 
-Load in `ai` mode. The reader builds exactly what the file says and has nothing else to go on, so say
+Load in `ai` mode. The reader does exactly what the file says and has nothing else to go on, so say
 more rather than less. Fill [ai-template.md](ai-template.md); match the density and tone of
 [ai-example.md](ai-example.md). Save as `docs/YY-MM-DD-<slug>.md`.
+
+The template is shaped for software. For other work keep its spine (TL;DR, goals, finished look,
+steps with "done when", acceptance, risks) and mark the code-only parts `N/A — <reason>`.
 
 ## Tier
 

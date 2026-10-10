@@ -12,8 +12,8 @@
       "default": "zh-CN",
       "description": "Language of the page's own labels: zh-CN for Chinese content, en for anything else. Write the content in the user's language."
     },
-    "title": { "$ref": "#/$defs/plain", "maxLength": 60, "description": "What gets built, as a noun phrase." },
-    "kind": { "$ref": "#/$defs/plain", "maxLength": 16, "description": "Document kind in the top bar. Defaults to 开发方案 / Plan." },
+    "title": { "$ref": "#/$defs/plain", "maxLength": 60, "description": "What gets done, as a noun phrase." },
+    "kind": { "$ref": "#/$defs/plain", "maxLength": 16, "description": "Document kind in the top bar, e.g. 开发方案, 活动方案, Launch plan. Defaults to 方案 / Plan." },
     "project": { "$ref": "#/$defs/plain", "maxLength": 40, "description": "Repo or product name in the top bar." },
     "status": { "enum": ["draft", "review", "approved"], "description": "review while waiting for decisions; approved once the user confirms." },
     "revision": { "type": "integer", "minimum": 1, "default": 1 },
@@ -21,12 +21,12 @@
     "reader": {
       "$ref": "#/$defs/plain",
       "maxLength": 80,
-      "description": "Who the main text is written for. Default: smart, knows the domain, was not in this conversation, does not know this code. Infer it from the request; never ask."
+      "description": "Who the main text is written for. Default: smart, knows the domain, was not in this conversation, does not know the details. Infer it from the request; never ask."
     },
     "summary": {
       "$ref": "#/$defs/text",
       "maxLength": 280,
-      "description": "The conclusion in 1–3 sentences: what gets built, its scope, its cost. Not background."
+      "description": "The conclusion in 1–3 sentences: what gets done, its scope, its cost. Not background."
     },
     "decisions": {
       "type": "array",
@@ -161,7 +161,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["type", "name", "how", "chosen", "reason"],
-      "description": "One row of an options-considered table: which way to build it. Consecutive option blocks form one table; exactly one is chosen. For comparing two things that are not alternatives (two vendors' behaviour), use a table.",
+      "description": "One row of an options-considered table: which way to do it. Consecutive option blocks form one table; exactly one is chosen. For comparing two things that are not alternatives (two vendors' behaviour), use a table.",
       "properties": {
         "type": { "const": "option" },
         "name": { "$ref": "#/$defs/plain", "maxLength": 16 },
