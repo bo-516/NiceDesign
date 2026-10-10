@@ -1,16 +1,16 @@
 ---
 name: wish
 description: >-
-  Use when the user runs /wish, /wish2human or /wish2ai with a task, or asks
-  for a development plan, tech spec, or implementation plan (开发方案 /
-  技术方案) for a feature, refactor, bugfix, or new project. Reads the repo
-  first, asks at most 4 multiple-choice questions (3–5 options each) only when
-  the request is underspecified, then writes the plan in one of two forms. For
-  people (default): a single-page HTML doc rendered from JSON, with a decisions
-  block, side notes for terms, and hidden-answer self-checks, saved as
-  docs/YY-MM-DD-{slug}.html plus its .json source. For an AI or engineer to
-  build from (when asked: "for AI", "给 AI 看", "2ai"): a self-contained
-  Markdown plan at docs/YY-MM-DD-{slug}.md. Plans only; never implements.
+  Plan a feature, refactor, bugfix, or new project before building it: a
+  development plan, tech spec, or implementation plan (开发方案 / 技术方案 /
+  开发计划). Use when the user asks for one or runs /wish. Writes for people by
+  default: a single-page HTML doc rendered from JSON, with decisions up front,
+  side notes for terms, and hidden-answer self-checks
+  (docs/YY-MM-DD-{slug}.html + .json). Writes a self-contained Markdown plan
+  instead when the plan is meant for an AI or agent to build from (交给 AI /
+  给 AI 看 / 2ai). Reads the repo first; asks at most 4 multiple-choice
+  questions, only when the request is underspecified. Plans only; never
+  implements.
 ---
 # Wish
 
@@ -30,8 +30,9 @@ offering 3–5 candidates read from the repo (README roadmap, TODO/FIXME, recent
 | `ai` | An agent or engineer who will build from it cold, without this conversation | `docs/YY-MM-DD-<slug>.md` | [references/ai.md](references/ai.md) |
 
 - `/wish2human` → `human`; `/wish2ai` → `ai`. No detection.
-- `/wish` → `human`, unless the request asks for the build spec: "for AI / an agent / Codex / Cursor",
-  "给 AI 看", "让 agent 照着做", "2ai", "markdown plan". Never ask which mode; name it in the report.
+- `/wish` → `human`, unless the plan is for an agent to build from: "for AI / an agent / Codex / Cursor",
+  "交给 AI", "给 AI 看", "让 AI / agent 照着做", "2ai", "markdown plan". Never ask which mode; name it in
+  the report.
 - A follow-up keeps the mode of the file it edits.
 
 ## Flow

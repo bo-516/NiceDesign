@@ -1,11 +1,12 @@
 ---
 name: wish2ai
 description: >-
-  Use when the user runs /wish2ai with a task. The wish planning flow fixed
-  to AI mode: reads the repo, asks only what changes the plan, then writes a
-  self-contained Markdown plan an agent or engineer can build from cold
-  (docs/YY-MM-DD-{slug}.md). Same as /wish without mode detection. Plans
-  only; never implements.
+  Write a development plan to hand to an AI agent (写开发计划交给 AI). Use when
+  the user wants a plan, spec, or task brief that Codex, Cursor, Claude Code,
+  or another agent will build from (给 AI 看 / 让 AI 照着做 / 交给 agent 开发),
+  or runs /wish2ai. Reads the repo, asks only what changes the plan, then
+  writes a self-contained Markdown plan that a reader with no context can
+  build from (docs/YY-MM-DD-{slug}.md). Plans only; never implements.
 ---
 # Wish → AI
 
