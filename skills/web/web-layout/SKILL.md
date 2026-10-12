@@ -28,9 +28,11 @@ Two frames. Pick one **by name** and say which, in one line, before writing code
 | For | console, dashboard, editor, canvas, chat, IDE, tool | landing, marketing, docs, article, long form, auth |
 | Root | `h-dvh overflow-hidden flex` | `min-h-dvh flex flex-col` |
 | Scrolls | regions, each with its own scroller | the document |
-| Chrome | permanently visible, `shrink-0` | `sticky top-0` header |
+| Chrome | permanently visible, `shrink-0` | `sticky top-0` header; a sidebar is `sticky` too |
 
-**Test:** must the sidebar / topbar stay visible while the user reads? → `fixed`.
+**Test:** what scrolls? One stream read top to bottom → `document`, even when a header or a docs
+sidebar must stay visible (that is `sticky`). Several regions that scroll on their own or share the
+viewport (nav + list + detail, editor + panels, messages + composer) → `fixed`.
 Mixed page = `document` outside, a `fixed`-style panel with its own scroller inside.
 
 **The one mistake that defines this skill:** a `fixed` frame written with

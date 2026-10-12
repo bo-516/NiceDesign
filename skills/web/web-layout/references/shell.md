@@ -7,7 +7,7 @@ Load with web-layout whenever there is a sidebar, top nav, split panes, or inner
 | | `fixed` — viewport-locked | `document` — page scrolls |
 |---|---|---|
 | Root | `height: 100dvh; overflow: hidden; display: flex` | `min-height: 100dvh; display: flex; flex-direction: column` |
-| Chrome | always visible, `flex-shrink: 0` | header `position: sticky; top: 0` |
+| Chrome | always visible, `flex-shrink: 0` | header `position: sticky; top: 0`; a sidebar is sticky too (§Sticky) |
 | Scrolling | inside named regions | the document |
 | Content longer than a screen | region scrolls, frame does not move | page grows |
 
@@ -99,6 +99,8 @@ right column ends up taller than the viewport. Size the container, let the chart
 
 - Sticky headers need a scroll ancestor; don’t put `overflow: hidden` on all parents.
 - Offset sticky by header height (`top: var(--header-h)`).
+- Sidebar in a `document` frame (docs, settings): `position: sticky; top: var(--header-h);
+  max-height: calc(100dvh - var(--header-h)); overflow: auto` — stays visible, no `fixed` frame needed.
 - Safe areas: `env(safe-area-inset-*)` on fixed chrome.
 - In a `fixed` frame, chrome is already permanent — `sticky` there is redundant.
 
