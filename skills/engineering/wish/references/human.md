@@ -9,6 +9,7 @@ never HTML**; the template renders it.
 | `assets/doc.schema.json` | The contract. Every `description` is a writing rule; read them all before writing. |
 | [human-example.json](human-example.json) | A passing document. Calibrate density and tone on it, not topic or language. |
 | `assets/build.py` | Validates the JSON and embeds it in `assets/template.html`. |
+| `assets/embed.mjs` | Fallback when python3 is missing: embeds the same way, checks nothing. |
 
 ## Reader
 
@@ -45,14 +46,19 @@ Unless the task clearly needs another order:
 python3 <skill dir>/assets/build.py docs/YY-MM-DD-<slug>.json    # writes the .html next to it
 ```
 
-Exit 1 lists every problem: fix the JSON, never the template. With `jsonschema` installed it also
-checks the schema. No python3: copy `assets/template.html` to the `.html` path and replace the line
+Exit 1 lists every problem: fix the JSON, never the template. No dependencies: it checks the whole
+schema, then terms, option groups, and table cells.
+
+No python3: `node <skill dir>/assets/embed.mjs docs/YY-MM-DD-<slug>.json` embeds the JSON the same
+way but checks nothing, so open the page and fix whatever it lists at the top. No node either: copy
+`assets/template.html` to the `.html` path and replace the line
 `<script type="application/json" id="doc-data">null</script>` with the JSON inside the same tag,
-writing every `<` as `<`; the page lists any rule it breaks at the top.
+writing every `<` in the JSON as `\u003c` (JSON reads it back as `<`; a raw `</script>` in the
+content would end the tag early).
 
 ## Gate
 
-build.py passes, and:
+build.py passes (without Python: the page lists no problems at the top), and:
 
 - [ ] The summary is a conclusion a busy reader could act on without reading further.
 - [ ] Each decision's first option is one you would defend; its `why` has a number or a fact.

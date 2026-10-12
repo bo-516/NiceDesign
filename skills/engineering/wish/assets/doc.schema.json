@@ -43,7 +43,7 @@
             "minItems": 2,
             "maxItems": 4,
             "items": { "$ref": "#/$defs/text" },
-            "description": "The first option is the recommendation. Each is \"option | cost\"; the cost is optional, e.g. \"转为后台任务，完成后站内通知 | +1 天\". Marks are allowed in the option text."
+            "description": "The first option is the recommendation. Each is \"option | cost\"; the cost is optional, e.g. \"转为后台任务，完成后站内通知 | +1 天\". The option text takes marks; a | inside [[shown text|term]] or `code` belongs to the mark, not the separator. The cost is plain text."
           },
           "why": { "$ref": "#/$defs/text", "maxLength": 200, "description": "Why the recommendation, backed by a number or a fact. If this decision interacts with another, say how here." }
         }
@@ -74,7 +74,7 @@
       "type": "object",
       "maxProperties": 8,
       "description": "Term → explanation (1–3 plain sentences), shown as a side note beside the line that uses it. Mark the term's first use as [[term]], reading in this order: summary, then decisions (question, options, why), then blocks. Every key must be marked and every mark must have a key. Only explain what the reader may not know.",
-      "propertyNames": { "minLength": 1, "maxLength": 20, "not": { "pattern": "[\\[\\]|]" } },
+      "propertyNames": { "minLength": 1, "maxLength": 20, "not": { "pattern": "[\\[\\]|]" }, "description": "A term name has no [, ] or |." },
       "additionalProperties": { "$ref": "#/$defs/text", "maxLength": 200 }
     },
     "changelog": {
@@ -93,7 +93,7 @@
       "type": "string",
       "minLength": 1,
       "not": { "pattern": "\\[\\[" },
-      "description": "Plain text: no [[term]] marks; ** and ` show literally."
+      "description": "Plain text: [[term]] marks are not allowed; ** and ` show literally."
     },
     "h2": {
       "type": "object",
@@ -150,7 +150,7 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/text" },
-          "description": "One string per row, cells separated by \" | \"; write a literal pipe as \\|. Same number of cells as columns. Cells take marks."
+          "description": "One string per row, cells separated by \" | \"; a | inside [[shown text|term]] or `code` stays in its cell, and any other literal pipe is written \\|. Same number of cells as columns. Cells take marks."
         },
         "file": { "$ref": "#/$defs/plain", "description": "File name, when the table shows the contents of a file." },
         "fileTag": { "$ref": "#/$defs/plain", "maxLength": 16, "description": "Short note on the file's header, e.g. 用 Excel 打开." },
