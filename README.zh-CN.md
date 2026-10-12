@@ -75,7 +75,7 @@ cp -R NiceDesign/skills/engineering/wish2ai .cursor/skills/wish2ai
 仓库里的 `web/`、`engineering/` 只是分类目录。拷贝时拷具体的 skill 文件夹，不要整个分类目录一起拷：Agent 只扫描 skills 目录下一层，`.cursor/skills/web/web-layout/` 这样多套一层就识别不到了。
 
 每个 skill 必须是「文件夹 + `SKILL.md`」，不要把文件摊平。
-`web-layout` 带一个 `references/` 目录（landing / dashboard / shell 配方），`wish` 带 `references/`（两种模式的写作规则、Markdown 骨架和两份样例）和 `assets/`（HTML 模板、JSON Schema、`build.py`），`SKILL.md` 会按需加载，请整个文件夹一起拷贝。
+`web-layout`、`wish` 的文件夹里还有 `references/`、`assets/` 等子目录，`SKILL.md` 会按需读取，请整个文件夹一起拷贝。
 
 ### 5. 更新 / 卸载
 
@@ -104,9 +104,9 @@ npx skills remove web-layout
 
 | Skill | 适合做什么 |
 |-------|------------|
-| [`wish`](skills/engineering/wish/SKILL.md) | 动手之前先想清楚：新功能、重构、运营活动、办一场活动、流程改版都行。产出一份能评审、能拍板、能交接的方案，默认给人看，要求时写给 AI |
-| [`wish2human`](skills/engineering/wish2human/SKILL.md) | 方案要给同事、老板或评审看，等人拍板 |
-| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 方案要交给 Codex、Cursor、Claude Code 等 AI 去执行 |
+| [`wish`](skills/engineering/wish/SKILL.md) | 动手之前先想清楚：新功能、重构、运营活动、流程改版都适用。先读现有材料、只问关键问题，再写成能评审、能交接的方案；默认写给人看，也能写给 AI 执行 |
+| [`wish2human`](skills/engineering/wish2human/SKILL.md) | 出一份同事看得懂、老板能拍板的方案：结论放最前，每个待决事项都附带建议，术语旁边就有解释 |
+| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 出一份丢给 AI 就能开工的方案：交给 Codex、Cursor、Claude Code，每一步做到什么算完、怎么验收都写在里面，不用来回追问 |
 
 用法：
 
@@ -124,14 +124,14 @@ npx skills remove web-layout
 2. 信息不够时只问内容，不问形式（给谁看、写多深、用哪种模式都有默认值）：每轮最多 4 个问题、最多 2 轮，每题 3–5 个选项，推荐项排第一；也可以直接回答「你定」。
 3. 文档语言跟随你的输入；之后的补充说明会更新同一份文档（修订号 +1，记一行变更），不会另起新文件。
 
-**给人看（默认）**：AI 只写 JSON（按 `assets/doc.schema.json`），`build.py` 校验后嵌进模板，生成 `docs/YY-MM-DD-<slug>.html`，JSON 源文件放在旁边。页面：
+**给人看（默认）**：生成 `docs/YY-MM-DD-<slug>.html`，单个文件，浏览器直接打开，发给别人也能直接看。页面：
 
 - 结论放最前，「需要你决定」的事每项都带建议和成本。
 - 术语在右侧边注里解释，和正文对齐；窄屏点开看。
 - 自检题点击才显示答案，专门针对最容易读错的地方。
 - 可收起的目录带阅读进度；可调字号、行距、字距、字体；浅色 / 深色跟随系统，也可手动切换。
 
-**交给 AI 执行**：写入 `docs/YY-MM-DD-<slug>.md`。骨架按软件开发设计，其他类型的工作保留主干（结论、目标、成品、步骤和完成标志、验收、风险），用不上的部分标 N/A。软件任务按规模分档：预估不到半天或改动少于 3 个文件用精简档；涉及数据迁移、鉴权、支付或公开 API 的一律用完整档。
+**交给 AI 执行**：生成 `docs/YY-MM-DD-<slug>.md`，零上下文也能照着做：目标、成品、每一步做到什么算完、怎么验收、有哪些风险都写清楚。小改动写得短；涉及数据迁移、鉴权、支付或公开 API 的写得更完整。
 
 只出方案，不动手做：不写代码、不发消息、不发布。
 

@@ -29,9 +29,9 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 
 | Skill | Use it for | 适合做什么 |
 |-------|------------|------------|
-| [`wish`](skills/engineering/wish/SKILL.md) | Thinking a task through before anyone starts on it: a new feature, a refactor, a campaign, an event, a process change. You get a plan to review, decide on, or hand off — for people by default, for an AI agent when you ask | 动手之前先想清楚：新功能、重构、运营活动、办一场活动、流程改版都行。产出一份能评审、能拍板、能交接的方案，默认给人看，要求时写给 AI |
-| [`wish2human`](skills/engineering/wish2human/SKILL.md) | A plan that teammates, a lead, or reviewers will read and sign off on | 方案要给同事、老板或评审看，等人拍板 |
-| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | A plan you'll hand to Codex, Cursor, Claude Code, or another agent to carry out | 方案要交给 Codex、Cursor、Claude Code 等 AI 去执行 |
+| [`wish`](skills/engineering/wish/SKILL.md) | Thinking a task through before anyone starts: a new feature, a refactor, a campaign, a process change. It reads what's already there, asks only what matters, then writes a plan you can review or hand off — for people by default, or for an AI agent to carry out | 动手之前先想清楚：新功能、重构、运营活动、流程改版都适用。先读现有材料、只问关键问题，再写成能评审、能交接的方案；默认写给人看，也能写给 AI 执行 |
+| [`wish2human`](skills/engineering/wish2human/SKILL.md) | Plans your team can follow and your lead can sign off on: the conclusion comes first, every open decision carries a recommendation, and jargon is explained right beside the text | 出一份同事看得懂、老板能拍板的方案：结论放最前，每个待决事项都附带建议，术语旁边就有解释 |
+| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | Plans an agent can pick up and run with: hand one to Codex, Cursor, or Claude Code, and every step already says what done looks like and how to check it — no back-and-forth | 出一份丢给 AI 就能开工的方案：交给 Codex、Cursor、Claude Code，每一步做到什么算完、怎么验收都写在里面，不用来回追问 |
 
 `wish2human` and `wish2ai` are entry points into `wish`; install `wish` alongside them.
 `wish2human` / `wish2ai` 只是 `wish` 的入口，需要和 `wish` 一起安装。
@@ -39,7 +39,7 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 ```text
 /wish 给订单列表加导出 CSV
 → 导出范围？ A. 当前筛选结果 (Recommended)  B. 全部订单  C. 勾选的行 …
-→ docs/26-09-23-export-orders-csv.html  (+ .json)
+→ docs/26-09-23-export-orders-csv.html
 
 /wish2ai 给订单列表加导出 CSV
 → docs/26-09-23-export-orders-csv.md
