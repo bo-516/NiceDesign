@@ -93,20 +93,20 @@ npx skills remove web-layout
 
 ### Web UI · 界面（`skills/web/`）
 
-| Skill | 覆盖内容 |
-|-------|----------|
-| [`web-color-depth`](skills/web/web-color-depth/SKILL.md) | 色板、OKLCH token、暗色模式、分层阴影与 Elevation |
-| [`web-layout`](skills/web/web-layout/SKILL.md) | 骨架选择（视口锁定 / 文档滚动）、滚动归属、间距阶、栅格、层次、应用壳；另带 `references/` 场景配方 |
-| [`web-interaction`](skills/web/web-interaction/SKILL.md) | 控件八态、表单、微反馈、CSS 动效预算 |
-| [`web-animation`](skills/web/web-animation/SKILL.md) | GSAP 优先：时间线、ScrollTrigger、React 清理、性能 |
+| Skill | 适合做什么 |
+|-------|------------|
+| [`web-color-depth`](skills/web/web-color-depth/SKILL.md) | 定配色、搭颜色 token 和暗色模式，给卡片、菜单、弹窗配合适的阴影层级 |
+| [`web-layout`](skills/web/web-layout/SKILL.md) | 搭落地页、仪表盘、应用壳：页面骨架、间距、栅格、响应式，以及该让哪块区域滚动 |
+| [`web-interaction`](skills/web/web-interaction/SKILL.md) | 让按钮、输入框、表单好用：悬停、聚焦、加载、报错等状态，点击反馈，不拖沓的过渡 |
+| [`web-animation`](skills/web/web-animation/SKILL.md) | 加动效：入场动画、滚动触发、固定与视差，在 React 里用 GSAP 不泄漏、不卡顿 |
 
 ### 工程化 · Engineering（`skills/engineering/`）
 
-| Skill | 覆盖内容 |
-|-------|----------|
-| [`wish`](skills/engineering/wish/SKILL.md) | 一句话需求 → 方案。开发、产品、设计、运营、市场都能用。默认写给人看；要求「给 AI 看」时写成交给 AI 执行的版本 |
-| [`wish2human`](skills/engineering/wish2human/SKILL.md) | 固定写给人看：由 JSON 渲染的单文件 HTML |
-| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 固定写交给 AI 执行：零上下文也能照着做的 Markdown 方案 |
+| Skill | 适合做什么 |
+|-------|------------|
+| [`wish`](skills/engineering/wish/SKILL.md) | 动手之前先想清楚：新功能、重构、运营活动、办一场活动、流程改版都行。产出一份能评审、能拍板、能交接的方案，默认给人看，要求时写给 AI |
+| [`wish2human`](skills/engineering/wish2human/SKILL.md) | 方案要给同事、老板或评审看，等人拍板 |
+| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 方案要交给 Codex、Cursor、Claude Code 等 AI 去执行 |
 
 用法：
 

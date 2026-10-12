@@ -18,20 +18,20 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 
 ### Web UI · 界面 — [`skills/web/`](skills/web)
 
-| Skill | EN | 中文 |
-|-------|----|------|
-| [`web-color-depth`](skills/web/web-color-depth/SKILL.md) | Palettes, OKLCH tokens, dark mode, layered shadows / elevation | 色板、OKLCH token、暗色模式、分层阴影与 Elevation |
-| [`web-layout`](skills/web/web-layout/SKILL.md) | Frame choice (viewport-locked vs document-scroll), scroll ownership, spacing scale, grids, hierarchy, app shells | 骨架选择（视口锁定 / 文档滚动）、滚动归属、间距阶、栅格、层次、应用壳 |
-| [`web-interaction`](skills/web/web-interaction/SKILL.md) | Control states, forms, micro-feedback, CSS motion budgets | 控件八态、表单、微反馈、CSS 动效预算 |
-| [`web-animation`](skills/web/web-animation/SKILL.md) | GSAP-first timelines, ScrollTrigger, React cleanup, perf | GSAP 优先：时间线、ScrollTrigger、React 清理、性能 |
+| Skill | Use it for | 适合做什么 |
+|-------|------------|------------|
+| [`web-color-depth`](skills/web/web-color-depth/SKILL.md) | Picking a palette, setting up color tokens and dark mode, giving cards, menus, and modals the right shadow depth | 定配色、搭颜色 token 和暗色模式，给卡片、菜单、弹窗配合适的阴影层级 |
+| [`web-layout`](skills/web/web-layout/SKILL.md) | Laying out a landing page, dashboard, or app shell: structure, spacing, grids, responsive behavior, and which area scrolls | 搭落地页、仪表盘、应用壳：页面骨架、间距、栅格、响应式，以及该让哪块区域滚动 |
+| [`web-interaction`](skills/web/web-interaction/SKILL.md) | Making buttons, inputs, and forms feel right: hover, focus, loading, and error states, click feedback, snappy transitions | 让按钮、输入框、表单好用：悬停、聚焦、加载、报错等状态，点击反馈，不拖沓的过渡 |
+| [`web-animation`](skills/web/web-animation/SKILL.md) | Adding motion: entrance animations, scroll-triggered effects, pinning and parallax, GSAP in React without leaks or jank | 加动效：入场动画、滚动触发、固定与视差，在 React 里用 GSAP 不泄漏、不卡顿 |
 
 ### Engineering · 工程化 — [`skills/engineering/`](skills/engineering)
 
-| Skill | EN | 中文 |
-|-------|----|------|
-| [`wish`](skills/engineering/wish/SKILL.md) | `/wish <task>` → turns a request into a plan before anyone starts the work — for engineering, product, design, ops, or marketing. Reads the context (the repo or your files), asks up to 4 multiple-choice questions when the request is thin, then writes the plan. Default: a page for people — single-file HTML rendered from JSON, with a decisions block, side notes for terms, and hidden-answer self-checks. Asked for the AI form: a Markdown plan an agent can carry out cold | `/wish <需求>` → 动手之前先把事情想清楚，写成方案。开发、产品、设计、运营、市场都能用。先读上下文（代码仓库或你给的文件），信息不够时带 3–5 个选项反问。默认写给人看：由 JSON 渲染的单文件 HTML，带待决事项、术语边注和点开才看答案的自检题；要求给 AI 看时，写零上下文也能照着执行的 Markdown 方案 |
-| [`wish2human`](skills/engineering/wish2human/SKILL.md) | `/wish2human <task>` → `wish`, people form, no mode detection → `docs/YY-MM-DD-<slug>.html` (+ `.json`) | `/wish2human <需求>` → 固定写给人看的版本 |
-| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | `/wish2ai <task>` → `wish`, AI form, no mode detection → `docs/YY-MM-DD-<slug>.md` | `/wish2ai <需求>` → 固定写交给 AI 执行的版本 |
+| Skill | Use it for | 适合做什么 |
+|-------|------------|------------|
+| [`wish`](skills/engineering/wish/SKILL.md) | Thinking a task through before anyone starts on it: a new feature, a refactor, a campaign, an event, a process change. You get a plan to review, decide on, or hand off — for people by default, for an AI agent when you ask | 动手之前先想清楚：新功能、重构、运营活动、办一场活动、流程改版都行。产出一份能评审、能拍板、能交接的方案，默认给人看，要求时写给 AI |
+| [`wish2human`](skills/engineering/wish2human/SKILL.md) | A plan that teammates, a lead, or reviewers will read and sign off on | 方案要给同事、老板或评审看，等人拍板 |
+| [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | A plan you'll hand to Codex, Cursor, Claude Code, or another agent to carry out | 方案要交给 Codex、Cursor、Claude Code 等 AI 去执行 |
 
 `wish2human` and `wish2ai` are entry points into `wish`; install `wish` alongside them.
 `wish2human` / `wish2ai` 只是 `wish` 的入口，需要和 `wish` 一起安装。
