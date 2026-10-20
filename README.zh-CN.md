@@ -2,7 +2,7 @@
 
 # NiceDesign
 
-精简、规则向的 Agent Skills：Web UI（颜色与深度、布局、交互、GSAP 优先的动画）+ 工程化（动手前先写方案）。少废话，多规则。
+精简、规则向的 Agent Skills：Web UI（颜色与深度、布局、交互、GSAP 优先的动画）+ 工程化（动手前先写方案 + 派活给另一个 agent 并审查）。少废话，多规则。
 
 ## 如何下载 / 安装 Skill
 
@@ -20,7 +20,7 @@ npx skills add https://github.com/bo-516/NiceDesign
 npx skills add bo-516/NiceDesign
 ```
 
-CLI 会列出全部七个 skill（Web UI 4 个 + 工程化 3 个），询问要装到哪些 Agent（Cursor、Claude Code、Codex 等），然后写入对应目录。
+CLI 会列出全部八个 skill（Web UI 4 个 + 工程化 4 个），询问要装到哪些 Agent（Cursor、Claude Code、Codex 等），然后写入对应目录。
 
 ### 2. 只装某一个 Skill
 
@@ -31,6 +31,7 @@ npx skills add bo-516/NiceDesign --skill web-interaction
 npx skills add bo-516/NiceDesign --skill web-animation
 npx skills add bo-516/NiceDesign --skill wish
 npx skills add bo-516/NiceDesign --skill wish --skill wish2human --skill wish2ai
+npx skills add bo-516/NiceDesign --skill elder
 ```
 
 `--skill` 后面写 skill 名即可，不用带分类目录。`wish2human`、`wish2ai` 只是 `wish` 的入口，要和 `wish` 一起装。
@@ -70,12 +71,13 @@ cp -R NiceDesign/skills/web/web-layout .cursor/skills/web-layout
 cp -R NiceDesign/skills/engineering/wish .cursor/skills/wish
 cp -R NiceDesign/skills/engineering/wish2human .cursor/skills/wish2human
 cp -R NiceDesign/skills/engineering/wish2ai .cursor/skills/wish2ai
+cp -R NiceDesign/skills/engineering/elder .cursor/skills/elder
 ```
 
 仓库里的 `web/`、`engineering/` 只是分类目录。拷贝时拷具体的 skill 文件夹，不要整个分类目录一起拷：Agent 只扫描 skills 目录下一层，`.cursor/skills/web/web-layout/` 这样多套一层就识别不到了。
 
 每个 skill 必须是「文件夹 + `SKILL.md`」，不要把文件摊平。
-`web-layout`、`wish` 的文件夹里还有 `references/`、`assets/` 等子目录，`SKILL.md` 会按需读取，请整个文件夹一起拷贝。
+`web-layout`、`wish`、`elder` 的文件夹里还有 `references/`、`assets/`、`scripts/`、`agents/` 等子目录，`SKILL.md` 会按需读取，请整个文件夹一起拷贝。
 
 ### 5. 更新 / 卸载
 
@@ -107,6 +109,7 @@ npx skills remove web-layout
 | [`wish`](skills/engineering/wish/SKILL.md) | 动手之前先想清楚：新功能、重构、运营活动、流程改版都适用。先读现有材料、只问关键问题，再写成能评审、能交接的方案；默认写给人看，也能写给 AI 执行 |
 | [`wish2human`](skills/engineering/wish2human/SKILL.md) | 出一份同事看得懂、老板能拍板的方案：结论放最前，每个待决事项都附带建议，术语旁边就有解释 |
 | [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 出一份丢给 AI 就能开工的方案：交给 Codex、Cursor、Claude Code，每一步做到什么算完、怎么验收都写在里面，不用来回追问 |
+| [`elder`](skills/engineering/elder/SKILL.md) | 两个 agent 搭档干活，参考 Devin Fusion：你的 agent 当 elder（远古者），负责规划、拍板、审查；shoggoth（修格斯）负责动手，它是另一个 agent CLI（Antigravity、Codex、Cursor、Claude Code、Grok Build 都行），模型随意。第一次用时会问你用哪个 shoggoth、什么模型和思考强度，这就是全部配置，之后用 `/elder config` 修改。shoggoth 的权限和你的 agent 一致：你配的允许、询问、拒绝规则和审批模式同样管它，该问的才问，问题都回到你和 elder 的对话里，仓库内越出范围的改动跑完后会标出来；每一轮都拿 git diff 和 shoggoth 自己的日志核对，编出来的「测试通过」会被抓出来。只能手动调用（`/elder`，Codex 里是 `$elder`），agent 不会自己触发 |
 
 用法：
 
@@ -135,10 +138,44 @@ npx skills remove web-layout
 
 只出方案，不动手做：不写代码、不发消息、不发布。
 
+**/elder：远古者指挥，修格斯干活**
+
+命名由来：elder 和 shoggoth 对应 Devin Fusion 里的 lead 和 sidekick，名字出自洛夫克拉夫特的《疯狂山脉》。远古者（Elder Things）造出修格斯（shoggoth）替自己盖城，没人盯着，修格斯就造了反。所以这里 shoggoth 只管干活，越出 brief 的事都要你点头。AI 圈也爱把大模型画成戴着笑脸面具的修格斯。
+
+只能手动调用：`/elder`（Codex 里是 `$elder`）。agent 不会根据对话自己触发它。
+
+```text
+/elder 给订单列表加导出 CSV                  # 用默认的 shoggoth
+/elder 用 flash 把 moment 换成 dayjs         # 这一次换个模型
+/elder docs/26-09-23-export-orders-csv.md    # 照 /wish2ai 的方案做
+/elder config                                # 换 CLI、模型、思考强度
+/elder config effort high                    # 只改一项
+```
+
+1. 你的 agent 当 elder：读材料、拆分工、写简报（brief）。需要拍板的事，比如产品和接口设计、安全相关的逻辑，以及最终验收，都留给它自己。
+2. shoggoth 是另一个跑在 headless 模式下的 agent CLI：Antigravity（agy）、Codex、Cursor、Claude Code、Grok Build，模型随便配。同一个 CLI 换个模型也行，比如 Codex Astra 当 elder、Codex 6.1 Sol 当 shoggoth。
+3. 唯一的配置就是选 shoggoth，而且不用手写：第一次用 `/elder` 时，elder 会先问你用哪个 CLI（只列本机装了的），再按这个 CLI 问模型和思考强度。每题推荐项排第一，最后一项可以自己输入。答完存成默认配置，之后用 `/elder config` 修改。elder 就是你正在用的 agent，不用配。
+4. 权限不用另外配置，shoggoth 直接沿用你的 agent 自己的权限设置（全局加项目，agy、Claude Code、Codex、Cursor、Grok Build 都支持）：
+   - 写 `.git/` 和 hook 文件一律拒绝。
+   - 你配的拒绝规则直接拒，询问规则问你，允许规则放行。
+   - 你的 agent 设成不问（agy `always-proceed`、Claude Code `bypassPermissions`、Codex `never` 加完全访问、Cursor `unrestricted`、Grok Build always-approve），shoggoth 也不问；设成从不问、直接拒（`dontAsk`），该问的就直接拒。
+   - 其余情况，仓库内的读写、只读命令（`ls`、`git status`、`rg` 等），以及你批准过的命令，直接放行。「这个任务都允许」只放行一字不差的同一条命令，参数一变就再问。
+   - Codex 当 shoggoth 时，在自己的沙箱里（只能写仓库、不能联网）跑命令不经过审批，只有想出沙箱时才过这一关。
+   - 别的命令、仓库外的文件、联网、MCP 工具，shoggoth 都会停下来等你，elder 在主会话里问你「允许一次 / 这个任务都允许 / 拒绝」。拒绝时可以附一句话给 shoggoth，它会照着改做法。
+   - 仓库内越出 brief 范围的改动不会被拦下，跑完在摘要里标出来。
+   - 派活前，elder 会把要跑的验证命令列出来，让你一次批完，后面只有意外情况才会打扰你。
+   - 不想审批，就把 `permissions` 设成 `full`。Grok Build 暂时没有审批这道门，只能这样跑，选它时会先跟你确认。
+5. 每一轮结束，`scripts/shoggoth.py` 会给一份摘要：
+   - 以 git diff 为准列出实际改了什么、有没有越界。
+   - shoggoth 报告里说「通过」的检查，会拿去和它自己的命令日志核对，没跑过的、跑挂了的都会标出来。
+   - 你批了什么、拒了什么。
+   - 最后附一行撤销命令（只读的侦察 run 没有）。
+6. 改得不对，就带着反馈回到同一个会话继续改；两轮还不行，或者它理解错了意图，elder 收回来自己做。不 commit、不 push。
+
 ## 理念
 
 - **规则重于长文** — 控制上下文体积；交付可执行决策，而不是流程表演。
-- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如方案。
+- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如方案，或 shoggoth 做完、elder 验过的改动。
 - Web 类从社区与官方来源提炼压缩而成（含 frontend-design、ui-craft、taste-skill、impeccable、greensock/gsap-skills、DESIGN.md 等）。
 
 ## 许可

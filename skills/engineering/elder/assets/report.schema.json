@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "summary", "files_changed", "checks", "notes", "deviations", "concerns", "questions"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["done", "partial", "blocked"],
+      "description": "done: every Done-when item is met. partial: some are. blocked: you stopped on a question."
+    },
+    "summary": {
+      "type": "string",
+      "description": "What you did, in at most 5 lines."
+    },
+    "files_changed": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Repo-relative paths you created, modified, or deleted."
+    },
+    "checks": {
+      "type": "array",
+      "description": "One entry per Verify command in the brief.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "result", "evidence"],
+        "properties": {
+          "command": { "type": "string" },
+          "result": { "type": "string", "enum": ["pass", "fail", "not_run"] },
+          "evidence": {
+            "type": "string",
+            "description": "The last lines of the command's real output; empty when not_run."
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Facts the elder should know, each with a path:line."
+    },
+    "deviations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Where you departed from the brief, and why."
+    },
+    "concerns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Risks, or disagreements with the brief, that did not block you."
+    },
+    "questions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Decisions you need from the elder before you can go on."
+    }
+  }
+}
