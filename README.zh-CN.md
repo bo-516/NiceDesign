@@ -2,7 +2,7 @@
 
 # NiceDesign
 
-精简、规则向的 Agent Skills：Web UI（颜色与深度、布局、交互、GSAP 优先的动画）+ 工程化（动手前先写方案 + 派活给另一个 agent 并审查）。少废话，多规则。
+精简、规则向的 Agent Skills：Web UI（颜色与深度、布局、交互、GSAP 优先的动画）+ 工程化（动手前先写方案 + 改之前先看效果 + 派活给另一个 agent 并审查）。少废话，多规则。
 
 ## 如何下载 / 安装 Skill
 
@@ -20,7 +20,7 @@ npx skills add https://github.com/bo-516/NiceDesign
 npx skills add bo-516/NiceDesign
 ```
 
-CLI 会列出全部八个 skill（Web UI 4 个 + 工程化 4 个），询问要装到哪些 Agent（Cursor、Claude Code、Codex 等），然后写入对应目录。
+CLI 会列出全部九个 skill（Web UI 4 个 + 工程化 5 个），询问要装到哪些 Agent（Cursor、Claude Code、Codex 等），然后写入对应目录。
 
 ### 2. 只装某一个 Skill
 
@@ -31,6 +31,7 @@ npx skills add bo-516/NiceDesign --skill web-interaction
 npx skills add bo-516/NiceDesign --skill web-animation
 npx skills add bo-516/NiceDesign --skill wish
 npx skills add bo-516/NiceDesign --skill wish --skill wish2human --skill wish2ai
+npx skills add bo-516/NiceDesign --skill peek
 npx skills add bo-516/NiceDesign --skill elder
 ```
 
@@ -71,13 +72,14 @@ cp -R NiceDesign/skills/web/web-layout .cursor/skills/web-layout
 cp -R NiceDesign/skills/engineering/wish .cursor/skills/wish
 cp -R NiceDesign/skills/engineering/wish2human .cursor/skills/wish2human
 cp -R NiceDesign/skills/engineering/wish2ai .cursor/skills/wish2ai
+cp -R NiceDesign/skills/engineering/peek .cursor/skills/peek
 cp -R NiceDesign/skills/engineering/elder .cursor/skills/elder
 ```
 
 仓库里的 `web/`、`engineering/` 只是分类目录。拷贝时拷具体的 skill 文件夹，不要整个分类目录一起拷：Agent 只扫描 skills 目录下一层，`.cursor/skills/web/web-layout/` 这样多套一层就识别不到了。
 
 每个 skill 必须是「文件夹 + `SKILL.md`」，不要把文件摊平。
-`web-layout`、`wish`、`elder` 的文件夹里还有 `references/`、`assets/`、`scripts/`、`agents/` 等子目录，`SKILL.md` 会按需读取，请整个文件夹一起拷贝。
+`web-layout`、`wish`、`peek`、`elder` 的文件夹里还有 `references/`、`assets/`、`scripts/`、`agents/` 等子目录，`SKILL.md` 会按需读取，请整个文件夹一起拷贝。
 
 ### 5. 更新 / 卸载
 
@@ -109,6 +111,7 @@ npx skills remove web-layout
 | [`wish`](skills/engineering/wish/SKILL.md) | 动手之前先想清楚：新功能、重构、运营活动、流程改版都适用。先读现有材料、只问关键问题，再写成能评审、能交接的方案；默认写给人看，也能写给 AI 执行 |
 | [`wish2human`](skills/engineering/wish2human/SKILL.md) | 出一份同事看得懂、老板能拍板的方案：结论放最前，每个待决事项都附带建议，术语旁边就有解释 |
 | [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | 出一份丢给 AI 就能开工的方案：交给 Codex、Cursor、Claude Code，每一步做到什么算完、怎么验收都写在里面，不用来回追问 |
+| [`peek`](skills/engineering/peek/SKILL.md) | 改之前先看效果：agent 先用项目里的真实代码和素材做一个能点的小页面，可以切换改前 / 改后，每个状态（加载、报错、空态…）都能定格，没定的地方做成开关让你选，还列出每个决定的依据和将要改的文件。你说 OK 之前不动项目里任何文件；改完再逐个状态对照这个页面验收。`/peek` 或说「先给我看看效果」必定触发，大的版面改动 agent 会自己先出预览；改文案、改颜色这种小事不会触发 |
 | [`elder`](skills/engineering/elder/SKILL.md) | 两个 agent 搭档干活，参考 Devin Fusion：你的 agent 当 elder（远古者），负责规划、拍板、审查；shoggoth（修格斯）负责动手，它是另一个 agent CLI（Antigravity、Codex、Cursor、Claude Code、Grok Build 都行），模型随意。第一次用时会问你用哪个 shoggoth、什么模型和思考强度，这就是全部配置，之后用 `/elder config` 修改。shoggoth 的权限和你的 agent 一致：你配的允许、询问、拒绝规则和审批模式同样管它，该问的才问，问题都回到你和 elder 的对话里，仓库内越出范围的改动跑完后会标出来；每一轮都拿 git diff 和 shoggoth 自己的日志核对，编出来的「测试通过」会被抓出来。只能手动调用（`/elder`，Codex 里是 `$elder`），agent 不会自己触发 |
 
 用法：
@@ -137,6 +140,38 @@ npx skills remove web-layout
 **交给 AI 执行**：生成 `docs/YY-MM-DD-<slug>.md`，零上下文也能照着做：目标、成品、每一步做到什么算完、怎么验收、有哪些风险都写清楚。小改动写得短；涉及数据迁移、鉴权、支付或公开 API 的写得更完整。
 
 只出方案，不动手做：不写代码、不发消息、不发布。
+
+**/peek：改之前先看效果**
+
+```text
+/peek 我的页两张卡片点击后加 loading 和失败提示
+先给我看看效果：把设置页改成左右两栏
+```
+
+触发：
+
+- `/peek`，或说「先给我看看效果 / 先看效果 / 先出预览」：必定触发。
+- 大的可见改动，agent 自己判断后先出预览：页面或区块重新排版、新页面 / 弹窗 / 抽屉、新增 3 个以上状态的交互流程、同时改 3 个以上组件的样式。
+- 改文案、改颜色、调间距、换图标这类小改不触发。说「直接改」可以跳过。
+
+流程：
+
+1. 读要改的代码，以及项目里同类东西现在怎么做（toast、loading、间距、文案语气），数清楚有多少处。
+2. 只写一个预览页，放在 agent 的产物目录或系统临时目录，不进仓库。项目里的文件一个都不动。
+3. 把预览给你看（能内嵌就内嵌，否则在浏览器打开），等你确认。有意见就改预览、修订号 +1，再等。
+4. 你说 OK 才开始改，按确认的版本做：每个状态、你选的方案，不多做。实现中发现做不到一样，停下来更新预览再确认。
+5. 改完跑项目自己的检查，再逐个状态对照预览，报告哪里一致、哪里有偏差。
+
+预览页是单个 HTML 文件，不联网、不用构建：
+
+- 改前 / 改后同框切换；「标出改动」会框出新增、变更、移除的元素。
+- 每个状态一个按钮，可以定格，标着新增 / 变更 / 移除；也可以直接点界面走完整流程（比如点击 → loading → 提示 → 复原）。
+- 没定的设计做成开关，推荐项默认选中并写明理由。
+- 文案有改动且项目做了多语言时，可以切换语言看长度。
+- 「依据」逐条列出每个视觉决定来自哪个文件、哪条项目惯例；没依据的标成「猜的」，排在最前。
+- 「将改动」列出要动的文件，「不动」列出你可能以为会改但不会改的部分。
+- 底部有一行可复制的回复，带上你选的方案，粘回对话就算确认。
+- 不是界面的改动（流程、状态机、数据结构）用 SVG 图表达，新增 / 变更 / 移除的节点用颜色区分。
 
 **/elder：远古者指挥，修格斯干活**
 
@@ -175,7 +210,7 @@ npx skills remove web-layout
 ## 理念
 
 - **规则重于长文** — 控制上下文体积；交付可执行决策，而不是流程表演。
-- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如方案，或 shoggoth 做完、elder 验过的改动。
+- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如方案、动手前你确认过的预览，或 shoggoth 做完、elder 验过的改动。
 - Web 类从社区与官方来源提炼压缩而成（含 frontend-design、ui-craft、taste-skill、impeccable、greensock/gsap-skills、DESIGN.md 等）。
 
 ## 许可

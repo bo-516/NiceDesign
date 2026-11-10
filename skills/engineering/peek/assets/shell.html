@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Peek</title>
+<style>
+:root{color-scheme:light dark;
+--pk-bg:var(--background,light-dark(#f5f5f2,#101012));
+--pk-card:var(--card,light-dark(#fff,#19191c));
+--pk-fg:var(--foreground,light-dark(#18181b,#ededf0));
+--pk-mute:var(--muted-foreground,light-dark(#63636b,#a0a0aa));
+--pk-line:var(--border,light-dark(#e2e2de,#2e2e34));
+--pk-accent:var(--primary,light-dark(#2d5bdc,#7096ff));
+--pk-on:var(--primary-foreground,light-dark(#fff,#0b0b0d));
+--pk-new:light-dark(#15803d,#4ade80);--pk-chg:light-dark(#a16207,#facc15);--pk-del:light-dark(#b91c1c,#f87171)}
+*{box-sizing:border-box}
+html{background:var(--pk-bg)}
+body{margin:0;padding:8px;color:var(--pk-fg);font:13px/1.45 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.pk{background:var(--pk-card);border:1px solid var(--pk-line);border-radius:12px;padding:14px;max-width:1100px;margin:0 auto}
+.pk-head{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.pk-head h1{margin:0;font-size:14px;font-weight:600}
+.pk-head p{margin:2px 0 0;color:var(--pk-mute);font-size:12px}
+.pk-rev{flex:none;color:var(--pk-mute);font-size:12px;border:1px solid var(--pk-line);border-radius:6px;padding:1px 6px}
+.pk-bar{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:10px}
+.pk-grp{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.pk-lab{color:var(--pk-mute);font-size:12px;margin-right:2px}
+.pk button{font:inherit;font-size:12px;color:var(--pk-fg);background:transparent;border:1px solid var(--pk-line);border-radius:6px;padding:3px 9px;cursor:pointer}
+.pk button[aria-pressed=true]{background:var(--pk-accent);border-color:var(--pk-accent);color:var(--pk-on)}
+.pk button:disabled{opacity:.4;cursor:not-allowed}
+.pk button:focus-visible{outline:2px solid var(--pk-accent);outline-offset:1px}
+.pk-tag{font-size:12px;font-weight:600;margin-left:5px}
+.pk-tag.new{color:var(--pk-new)}.pk-tag.changed,.pk-tag.guess{color:var(--pk-chg)}.pk-tag.removed{color:var(--pk-del)}
+button[aria-pressed=true] .pk-tag{color:inherit}
+.pk-frame{margin:12px auto 0;border:1px solid var(--pk-line);border-radius:10px;overflow:hidden;position:relative}
+.pk-frame.phone{max-width:390px;border-radius:22px}
+.pk-frame.none{border:0;border-radius:0;overflow:visible}
+#stage [data-off]{display:none!important}
+#stage[data-marks=on] [data-mark]{outline:2px dashed var(--pk-chg);outline-offset:2px}
+#stage[data-marks=on] [data-mark=new]{outline-color:var(--pk-new)}
+#stage[data-marks=on] [data-mark=removed]{outline-color:var(--pk-del)}
+#stage svg [data-mark=new]{stroke:var(--pk-new)}#stage svg [data-mark=changed]{stroke:var(--pk-chg)}#stage svg [data-mark=removed]{stroke:var(--pk-del)}
+#stage svg text[data-mark]{stroke:none}
+#stage svg text[data-mark=new]{fill:var(--pk-new)}#stage svg text[data-mark=changed]{fill:var(--pk-chg)}#stage svg text[data-mark=removed]{fill:var(--pk-del)}
+.pk-note{margin:8px 0 0;color:var(--pk-mute);font-size:12px;min-height:17px;text-align:center}
+.pk-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 20px;margin-top:10px;border-top:1px solid var(--pk-line);padding-top:8px}
+.pk summary{cursor:pointer;font-weight:600;font-size:12px}
+.pk ul{margin:6px 0 0;padding:0;list-style:none;font-size:12px}
+.pk li{padding:2px 0;overflow-wrap:anywhere}
+.pk code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--pk-mute)}
+.pk-reply{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;border-top:1px solid var(--pk-line);padding-top:10px}
+.pk-reply code{flex:1;min-width:200px;color:var(--pk-fg);background:var(--pk-bg);border:1px solid var(--pk-line);border-radius:6px;padding:4px 8px;user-select:all}
+</style>
+<!-- PEEK:CSS — styles for the stage only; scope every selector under #stage -->
+<style id="stage-css">
+</style>
+</head>
+<body>
+<div class="pk">
+  <div class="pk-head"><div><h1 id="pk-title"></h1><p id="pk-sum"></p></div><span class="pk-rev" id="pk-rev"></span></div>
+  <div class="pk-bar" id="pk-bar"></div>
+  <div class="pk-frame" id="pk-frame">
+    <!-- PEEK:STAGE — the changed region plus minimal context -->
+    <div id="stage">
+    </div>
+  </div>
+  <p class="pk-note" id="pk-note"></p>
+  <div class="pk-cols" id="pk-cols"></div>
+  <div class="pk-reply"><code id="pk-reply"></code><button id="pk-copy"></button></div>
+</div>
+<!-- PEEK:CONFIG -->
+<script type="application/json" id="peek-config">
+{"title":"","summary":"","rev":1,"frame":"none","states":[{"id":"default","label":"Default"}]}
+</script>
+<script>
+(()=>{
+const C=JSON.parse(document.getElementById('peek-config').textContent);
+const U=Object.assign({before:'Before',after:'After',marks:'Marks',basis:'Basis',change:'Will change',keep:'Not touched',copy:'Copy reply',copied:'Copied',ok:'OK',rec:'recommended',new:'NEW',changed:'CHANGED',removed:'REMOVED',guess:'GUESS',convention:'convention'},C.ui);
+const $=id=>document.getElementById(id),stage=$('stage'),bar=$('pk-bar');
+const el=(t,p,...k)=>{const e=Object.assign(document.createElement(t),p);e.append(...k);return e};
+const sides=C.sides||['before','after'],vars=C.variants||[],locs=C.locales||[];
+const S={side:sides[sides.length-1],state:C.start||C.states[0].id,locale:locs[0]&&locs[0].id,marks:'off'};
+vars.forEach(v=>S[v.id]=(v.options.find(o=>o.rec)||v.options[0]).id);
+const has=(s,side)=>!(side==='before'&&s.badge==='new')&&!(side==='after'&&s.badge==='removed');
+const match=c=>c.trim().split(/\s+/).every(t=>{const n=t[0]==='!';if(n)t=t.slice(1);const i=t.indexOf(':'),ok=t.slice(i+1).split(',').includes(S[t.slice(0,i)]);return n?!ok:ok});
+let timers=[],btns=[];
+const stop=()=>{timers.forEach(clearTimeout);timers=[]};
+const set=(k,v)=>{stop();S[k]=v;render()};
+const run=id=>{stop();let t=0;(C.flows&&C.flows[id]||[]).forEach(s=>{timers.push(setTimeout(()=>{S.state=s.state;render()},t));t+=s.ms||0})};
+const group=(label,key,opts,off)=>{const g=el('div',{className:'pk-grp'});if(label)g.append(el('span',{className:'pk-lab',textContent:label}));
+  opts.forEach(o=>{const b=el('button',{type:'button',textContent:o.label,title:o.why||''});
+    if(o.tag)b.append(el('span',{className:'pk-tag '+o.cls,textContent:o.tag}));
+    b.onclick=()=>set(key,key==='marks'?(S.marks==='on'?'off':'on'):o.id);btns.push({b,key,id:o.id,off:off||(()=>false),o});g.append(b)});bar.append(g)};
+if(sides.length>1)group('', 'side',sides.map(s=>({id:s,label:U[s]})));
+group('','state',C.states.map(s=>({id:s.id,label:s.label,tag:s.badge&&s.badge!=='same'?U[s.badge]:'',cls:s.badge,s})),o=>!has(o.s,S.side));
+vars.forEach(v=>group(v.label,v.id,v.options.map(o=>({id:o.id,label:o.label+(o.rec?' ★':''),why:(o.rec?U.rec+(o.why?': ':''):'')+(o.why||'')})),()=>S.side==='before'));
+if(locs.length>1)group('','locale',locs);
+if(stage.querySelector('[data-mark]')&&!stage.querySelector('svg'))group('','marks',[{id:'on',label:U.marks}]);
+function render(){
+  const cur=C.states.find(s=>s.id===S.state);
+  if(!cur||!has(cur,S.side))S.state=(C.states.find(s=>has(s,S.side))||C.states[0]).id;
+  ['side','state','locale','marks'].forEach(k=>S[k]&&stage.setAttribute('data-'+k,S[k]));
+  vars.forEach(v=>stage.setAttribute('data-v-'+v.id,S[v.id]));
+  stage.querySelectorAll('[data-show]').forEach(e=>e.toggleAttribute('data-off',!match(e.dataset.show)));
+  const T=C.text&&C.text[S.locale];if(T)stage.querySelectorAll('[data-t]').forEach(e=>{if(e.dataset.t in T)e.textContent=T[e.dataset.t]});
+  btns.forEach(x=>{x.b.setAttribute('aria-pressed',S[x.key]===x.id);x.b.disabled=x.off(x.o)});
+  $('pk-note').textContent=(C.states.find(s=>s.id===S.state)||{}).note||'';
+  $('pk-reply').textContent=['peek r'+(C.rev||1),...vars.map(v=>v.id+'='+S[v.id]),U.ok].join(' · ');
+}
+stage.addEventListener('click',e=>{const t=e.target.closest('[data-go],[data-flow]');if(!t||!stage.contains(t))return;t.dataset.flow?run(t.dataset.flow):set('state',t.dataset.go)});
+document.title=$('pk-title').textContent=C.title||'Peek';$('pk-sum').textContent=C.summary||'';$('pk-rev').textContent='r'+(C.rev||1);
+$('pk-frame').classList.add(C.frame||'none');
+const list=(title,items,open)=>{if(!items||!items.length)return;const u=el('ul',{});items.forEach(i=>u.append(i));$('pk-cols').append(el('details',{open},el('summary',{textContent:title+' ('+items.length+')'}),u))};
+const rank={guess:0,convention:1};
+list(U.basis,(C.basis||[]).slice().sort((a,b)=>(rank[a.kind]??2)-(rank[b.kind]??2)).map(b=>el('li',{},b.what+' ',el('code',{textContent:b.source||''}),b.kind==='guess'?el('span',{className:'pk-tag guess',textContent:U.guess}):'')),true);
+const F=C.files||{};
+list(U.change,(F.change||[]).map(f=>el('li',{},el('code',{textContent:f.path}),f.what?' — '+f.what:'')),true);
+list(U.keep,(F.keep||[]).map(k=>el('li',{textContent:k})),false);
+if(!$('pk-cols').children.length)$('pk-cols').remove();
+const cp=$('pk-copy');cp.textContent=U.copy;cp.onclick=async()=>{const t=$('pk-reply').textContent;try{await navigator.clipboard.writeText(t);cp.textContent=U.copied;setTimeout(()=>cp.textContent=U.copy,1200)}catch(_){getSelection().selectAllChildren($('pk-reply'))}};
+render();
+})();
+</script>
+</body>
+</html>

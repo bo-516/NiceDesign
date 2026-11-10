@@ -32,6 +32,7 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 | [`wish`](skills/engineering/wish/SKILL.md) | Thinking a task through before anyone starts: a new feature, a refactor, a campaign, a process change. It reads what's already there, asks only what matters, then writes a plan you can review or hand off — for people by default, or for an AI agent to carry out | 动手之前先想清楚：新功能、重构、运营活动、流程改版都适用。先读现有材料、只问关键问题，再写成能评审、能交接的方案；默认写给人看，也能写给 AI 执行 |
 | [`wish2human`](skills/engineering/wish2human/SKILL.md) | Plans your team can follow and your lead can sign off on: the conclusion comes first, every open decision carries a recommendation, and jargon is explained right beside the text | 出一份同事看得懂、老板能拍板的方案：结论放最前，每个待决事项都附带建议，术语旁边就有解释 |
 | [`wish2ai`](skills/engineering/wish2ai/SKILL.md) | Plans an agent can pick up and run with: hand one to Codex, Cursor, or Claude Code, and every step already says what done looks like and how to check it — no back-and-forth | 出一份丢给 AI 就能开工的方案：交给 Codex、Cursor、Claude Code，每一步做到什么算完、怎么验收都写在里面，不用来回追问 |
+| [`peek`](skills/engineering/peek/SKILL.md) | Seeing a change before it's made: your agent first builds a small clickable page from the project's real code and assets, with a Before / After switch, every state you can freeze (loading, error, empty…), open choices as toggles, and a list of what each decision is based on and which files will change. Nothing in the project is touched until you say OK; after the build, each state is checked against the page. Runs on `/peek` or "show me first", and on its own before big layout changes; never for a copy or color tweak | 改之前先看效果：agent 先用项目里的真实代码和素材做一个能点的小页面，可以切换改前 / 改后，每个状态（加载、报错、空态…）都能定格，没定的地方做成开关让你选，还列出每个决定的依据和将要改的文件。你说 OK 之前不动项目里任何文件；改完再逐个状态对照这个页面验收。`/peek` 或说「先给我看看效果」必定触发，大的版面改动 agent 会自己先出预览；改文案、改颜色这种小事不会触发 |
 | [`elder`](skills/engineering/elder/SKILL.md) | Two agents on one job, the way Devin Fusion pairs them: your agent is the elder and plans, decides, and reviews, while a shoggoth, a worker agent CLI on any model (Antigravity, Codex, Cursor, Claude Code, or Grok Build), does the hands-on work. The first run asks which shoggoth, model, and effort to use, and that's the whole setup; `/elder config` changes it. The shoggoth gets your agent's permissions: your own allow, ask, and deny rules and your approval mode apply to it, so it asks only where your agent would, and those requests come back to your conversation with the elder; scope breaks inside the repo are flagged afterwards. Every round is checked against the git diff and the shoggoth's own log, so a made-up "tests pass" gets caught. It runs only when you call it (`/elder`, or `$elder` in Codex); agents never start it on their own | 两个 agent 搭档干活，参考 Devin Fusion：你的 agent 当 elder（远古者），负责规划、拍板、审查；shoggoth（修格斯）负责动手，它是另一个 agent CLI（Antigravity、Codex、Cursor、Claude Code、Grok Build 都行），模型随意。第一次用时会问你用哪个 shoggoth、什么模型和思考强度，这就是全部配置，之后用 `/elder config` 修改。shoggoth 的权限和你的 agent 一致：你配的允许、询问、拒绝规则和审批模式同样管它，该问的才问，问题都回到你和 elder 的对话里；每一轮都拿 git diff 和 shoggoth 自己的日志核对，编出来的「测试通过」会被抓出来。只能手动调用（`/elder`，Codex 里是 `$elder`），agent 不会自己触发 |
 
 `wish2human` and `wish2ai` are entry points into `wish`; install `wish` alongside them.
@@ -44,6 +45,11 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 
 /wish2ai 给订单列表加导出 CSV
 → docs/26-09-23-export-orders-csv.md
+
+/peek 我的页两张卡片点击后加 loading 和失败提示
+→ 预览页：改前 / 改后 · 5 个状态 · Toast 位置：底部 (推荐) / 顶部
+→ 你：toast 用底部，ok
+→ 开始改代码 → 逐个状态对照预览验收
 
 /elder docs/26-09-23-export-orders-csv.md
 → 用哪个 shoggoth 干活？ A. agy (Recommended)  B. codex  C. grok …（只在第一次问）
@@ -59,8 +65,8 @@ Works with Cursor, Claude Code, Codex, and other agents that support the Agent S
 
 - **Rules over essays** — keep context small; ship decisions, not process theater.
 - **规则重于长文** — 控制上下文体积；交付可执行决策，而不是流程表演。
-- **Two shelves** — `web/`: color/depth · layout · interaction · animation (shadows live with color). `engineering/`: workflow skills that leave an artifact behind, such as a plan, or a change a shoggoth made and the elder checked.
-- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如方案，或 shoggoth 做完、elder 验过的改动。
+- **Two shelves** — `web/`: color/depth · layout · interaction · animation (shadows live with color). `engineering/`: workflow skills that leave an artifact behind, such as a plan, a preview you approved before the change, or a change a shoggoth made and the elder checked.
+- **两类** — `web/`：颜色/深度 · 布局 · 交互 · 动画（阴影归入颜色）。`engineering/`：留下产物的工作流 skill，比如方案、动手前你确认过的预览，或 shoggoth 做完、elder 验过的改动。
 - Web skills are distilled from community & official sources (frontend-design, ui-craft, taste-skill, impeccable, greensock/gsap-skills, DESIGN.md, and others) into compact rule packs.
 - Web 类从社区与官方来源提炼压缩而成（含 frontend-design、ui-craft、taste-skill、impeccable、greensock/gsap-skills、DESIGN.md 等）。
 
