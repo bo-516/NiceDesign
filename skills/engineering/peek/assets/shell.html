@@ -18,38 +18,54 @@
 html{background:var(--pk-bg)}
 body{margin:0;padding:8px;color:var(--pk-fg);font:13px/1.45 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 .pk{background:var(--pk-card);border:1px solid var(--pk-line);border-radius:12px;padding:14px;max-width:1100px;margin:0 auto}
+.pk [hidden]{display:none!important}
 .pk-head{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
 .pk-head h1{margin:0;font-size:14px;font-weight:600}
-.pk-head p{margin:2px 0 0;color:var(--pk-mute);font-size:12px}
 .pk-rev{flex:none;color:var(--pk-mute);font-size:12px;border:1px solid var(--pk-line);border-radius:6px;padding:1px 6px}
-.pk-bar{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:10px}
-.pk-grp{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
-.pk-lab{color:var(--pk-mute);font-size:12px;margin-right:2px}
+.pk-lint{margin-top:10px;border:1px solid var(--pk-del);border-radius:8px;padding:6px 10px;color:var(--pk-del);font-size:12px;white-space:pre-line}
+.pk-bar{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;margin-top:10px}
+.pk-seg{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .pk button{font:inherit;font-size:12px;color:var(--pk-fg);background:transparent;border:1px solid var(--pk-line);border-radius:6px;padding:3px 9px;cursor:pointer}
 .pk button[aria-pressed=true]{background:var(--pk-accent);border-color:var(--pk-accent);color:var(--pk-on)}
 .pk button:disabled{opacity:.4;cursor:not-allowed}
 .pk button:focus-visible{outline:2px solid var(--pk-accent);outline-offset:1px}
-.pk-tag{font-size:12px;font-weight:600;margin-left:5px}
-.pk-tag.new{color:var(--pk-new)}.pk-tag.changed,.pk-tag.guess{color:var(--pk-chg)}.pk-tag.removed{color:var(--pk-del)}
-button[aria-pressed=true] .pk-tag{color:inherit}
-.pk-frame{margin:12px auto 0;border:1px solid var(--pk-line);border-radius:10px;overflow:hidden;position:relative}
+#pk-side button{font-size:13px;font-weight:600;padding:5px 14px}
+.pk-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--pk-chg)}
+.pk-dot.new{background:var(--pk-new)}.pk-dot.removed{background:var(--pk-del)}
+.pk-tag{font-size:12px;font-weight:600;margin-left:5px;color:var(--pk-chg)}
+.pk-frame{margin:12px auto 0;border:1px solid var(--pk-line);border-radius:10px;overflow:hidden;position:relative;transition:max-width .32s,height .32s,border-radius .32s}
 .pk-frame.phone{max-width:390px;border-radius:22px}
+.pk-frame.zoom{max-width:100%;border-radius:10px}
 .pk-frame.none{border:0;border-radius:0;overflow:visible}
+#stage{position:relative;will-change:transform;transform-origin:0 0;transition:transform .32s cubic-bezier(.2,.8,.2,1)}
 #stage [data-off]{display:none!important}
-#stage[data-marks=on] [data-mark]{outline:2px dashed var(--pk-chg);outline-offset:2px}
-#stage[data-marks=on] [data-mark=new]{outline-color:var(--pk-new)}
-#stage[data-marks=on] [data-mark=removed]{outline-color:var(--pk-del)}
 #stage svg [data-mark=new]{stroke:var(--pk-new)}#stage svg [data-mark=changed]{stroke:var(--pk-chg)}#stage svg [data-mark=removed]{stroke:var(--pk-del)}
 #stage svg text[data-mark]{stroke:none}
 #stage svg text[data-mark=new]{fill:var(--pk-new)}#stage svg text[data-mark=changed]{fill:var(--pk-chg)}#stage svg text[data-mark=removed]{fill:var(--pk-del)}
+.pk-veil{position:absolute;inset:0;overflow:hidden;background:var(--pk-card);transition:opacity .2s}
+.pk-veil.off{opacity:0;pointer-events:none}
+.pk-veil>#stage{filter:blur(6px) saturate(.6)}
+.pk-veil::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--pk-fog,var(--pk-card)) 55%,transparent)}
+.pk-rings{position:absolute;inset:0;pointer-events:none}
+.pk-ring{--rc:#f59e0b;--tc:var(--pk-chg);position:absolute;border:1.5px solid var(--rc)}
+.pk-ring.new{--rc:#22c55e;--tc:var(--pk-new)}.pk-ring.removed{--rc:#ef4444;--tc:var(--pk-del)}
+.pk-ring.tap{--rc:var(--pk-accent);border-width:1px;border-style:dashed}
+.pk-ring.ghost{--rc:#9ca3af;border-style:dashed}
+.pk-ring.was{border-style:dashed}
+.pk .pk-ring button{position:absolute;left:8px;pointer-events:auto;font-size:10px;font-weight:600;line-height:1;padding:3px 6px;border-radius:5px;color:var(--tc);border:1px solid var(--rc);background:var(--pk-card)}
+.pk-scenes{justify-content:center;margin-top:10px}
 .pk-note{margin:8px 0 0;color:var(--pk-mute);font-size:12px;min-height:17px;text-align:center}
+.pk-var{justify-content:center;gap:4px 8px;margin-top:6px;font-size:12px}
+.pk-lab{font-weight:600}
+.pk-why{color:var(--pk-mute)}
 .pk-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 20px;margin-top:10px;border-top:1px solid var(--pk-line);padding-top:8px}
 .pk summary{cursor:pointer;font-weight:600;font-size:12px}
 .pk ul{margin:6px 0 0;padding:0;list-style:none;font-size:12px}
 .pk li{padding:2px 0;overflow-wrap:anywhere}
-.pk code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--pk-mute)}
+.pk code,.pk-old{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--pk-mute)}
 .pk-reply{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;border-top:1px solid var(--pk-line);padding-top:10px}
 .pk-reply code{flex:1;min-width:200px;color:var(--pk-fg);background:var(--pk-bg);border:1px solid var(--pk-line);border-radius:6px;padding:4px 8px;user-select:all}
+.pk-reply code.hint{font:inherit;font-size:12px;color:var(--pk-mute);background:none;border:0;padding:0;text-align:center;user-select:auto}
 </style>
 <!-- PEEK:CSS — styles for the stage only; scope every selector under #stage -->
 <style id="stage-css">
@@ -57,68 +73,167 @@ button[aria-pressed=true] .pk-tag{color:inherit}
 </head>
 <body>
 <div class="pk">
-  <div class="pk-head"><div><h1 id="pk-title"></h1><p id="pk-sum"></p></div><span class="pk-rev" id="pk-rev"></span></div>
-  <div class="pk-bar" id="pk-bar"></div>
+  <div class="pk-head"><h1 id="pk-title"></h1><span class="pk-rev" id="pk-rev"></span></div>
+  <div class="pk-lint" id="pk-lint" hidden></div>
+  <div class="pk-bar"><div class="pk-seg" id="pk-side"></div><div class="pk-seg" id="pk-tools"></div></div>
   <div class="pk-frame" id="pk-frame">
-    <!-- PEEK:STAGE — the changed region plus minimal context -->
+    <!-- PEEK:STAGE — the page (or the component) being changed -->
     <div id="stage">
     </div>
   </div>
+  <div class="pk-seg pk-scenes" id="pk-scenes"></div>
   <p class="pk-note" id="pk-note"></p>
+  <div id="pk-vars"></div>
   <div class="pk-cols" id="pk-cols"></div>
   <div class="pk-reply"><code id="pk-reply"></code><button id="pk-copy"></button></div>
 </div>
 <!-- PEEK:CONFIG -->
 <script type="application/json" id="peek-config">
-{"title":"","summary":"","rev":1,"frame":"none","states":[{"id":"default","label":"Default"}]}
+{"title":"","rev":1,"frame":"none","scenes":[{"id":"default","label":"Default","badge":"changed"}]}
 </script>
 <script>
 (()=>{
 const C=JSON.parse(document.getElementById('peek-config').textContent);
-const U=Object.assign({before:'Before',after:'After',marks:'Marks',basis:'Basis',change:'Will change',keep:'Not touched',copy:'Copy reply',copied:'Copied',ok:'OK',rec:'recommended',new:'NEW',changed:'CHANGED',removed:'REMOVED',guess:'GUESS',convention:'convention'},C.ui);
-const $=id=>document.getElementById(id),stage=$('stage'),bar=$('pk-bar');
+const U=Object.assign({before:'Before',after:'After',spot:'Spotlight',close:'Close-up',lift:'Hold to see the whole page',behavior:'Behavior',basis:'Basis',change:'Will change',keep:'Not touched',copy:'Copy reply',copied:'Copied',ok:'OK',okHint:'Reply OK to build',rec:'recommended',new:'NEW',changed:'CHANGED',removed:'REMOVED',guess:'GUESS',lint:'Over budget. Fix before showing:'},C.ui);
+const $=id=>document.getElementById(id),stage=$('stage'),frame=$('pk-frame');
 const el=(t,p,...k)=>{const e=Object.assign(document.createElement(t),p);e.append(...k);return e};
-const sides=C.sides||['before','after'],vars=C.variants||[],locs=C.locales||[];
-const S={side:sides[sides.length-1],state:C.start||C.states[0].id,locale:locs[0]&&locs[0].id,marks:'off'};
-vars.forEach(v=>S[v.id]=(v.options.find(o=>o.rec)||v.options[0]).id);
-const has=(s,side)=>!(side==='before'&&s.badge==='new')&&!(side==='after'&&s.badge==='removed');
+const sides=C.sides||['before','after'],scenes=C.scenes||[],vars=C.variants||[],listed=scenes.filter(s=>s.badge);
+const framed=(C.frame||'none')!=='none',marked=framed&&!!stage.querySelector('[data-mark]');
+const S={side:sides[sides.length-1],scene:C.start||(listed[0]||scenes[0]||{}).id,stress:'off',view:C.view==='closeup'?'close':'spot'};
+vars.forEach(v=>{v.rec=(v.options.find(o=>o.rec)||v.options[0]).id;S[v.id]=v.rec});
+
+// Budget check: a preview over budget says so on the page.
+const wid=s=>[...(s||'')].reduce((n,c)=>n+(c.codePointAt(0)>0x2e7f?2:1),0),L=[],ids=new Set(scenes.map(s=>s.id));
+if(C.states||C.locales)L.push('"states" / "locales" are gone: use "scenes" and "stress"');
+if(!listed.length)L.push('no scene has a badge');
+if(listed.length>4)L.push('scenes with a badge: '+listed.length+' > 4');
+if(scenes.length-listed.length>2)L.push('scenes without a badge: '+(scenes.length-listed.length)+' > 2');
+scenes.forEach(s=>{if(wid(s.label)>20)L.push(s.id+': label wider than 20 columns');if(wid(s.note)>90)L.push(s.id+': note wider than 90 columns')});
+if(vars.length>2)L.push('variant groups: '+vars.length+' > 2');
+vars.forEach(v=>{if(v.options.length>3)L.push(v.id+': more than 3 options');if(!(v.on||[]).length)L.push(v.id+': "on" names no scene');(v.on||[]).forEach(i=>ids.has(i)||L.push(v.id+': "on" names an unknown scene '+i))});
+if(L.length){$('pk-lint').hidden=false;$('pk-lint').textContent=U.lint+'\n'+L.map(x=>'• '+x).join('\n')}
+
 const match=c=>c.trim().split(/\s+/).every(t=>{const n=t[0]==='!';if(n)t=t.slice(1);const i=t.indexOf(':'),ok=t.slice(i+1).split(',').includes(S[t.slice(0,i)]);return n?!ok:ok});
+const texts=[...stage.querySelectorAll('[data-t]')];texts.forEach(e=>e._t=e.textContent);
 let timers=[],btns=[];
 const stop=()=>{timers.forEach(clearTimeout);timers=[]};
-const set=(k,v)=>{stop();S[k]=v;render()};
-const run=id=>{stop();let t=0;(C.flows&&C.flows[id]||[]).forEach(s=>{timers.push(setTimeout(()=>{S.state=s.state;render()},t));t+=s.ms||0})};
-const group=(label,key,opts,off)=>{const g=el('div',{className:'pk-grp'});if(label)g.append(el('span',{className:'pk-lab',textContent:label}));
-  opts.forEach(o=>{const b=el('button',{type:'button',textContent:o.label,title:o.why||''});
-    if(o.tag)b.append(el('span',{className:'pk-tag '+o.cls,textContent:o.tag}));
-    b.onclick=()=>set(key,key==='marks'?(S.marks==='on'?'off':'on'):o.id);btns.push({b,key,id:o.id,off:off||(()=>false),o});g.append(b)});bar.append(g)};
-if(sides.length>1)group('', 'side',sides.map(s=>({id:s,label:U[s]})));
-group('','state',C.states.map(s=>({id:s.id,label:s.label,tag:s.badge&&s.badge!=='same'?U[s.badge]:'',cls:s.badge,s})),o=>!has(o.s,S.side));
-vars.forEach(v=>group(v.label,v.id,v.options.map(o=>({id:o.id,label:o.label+(o.rec?' ★':''),why:(o.rec?U.rec+(o.why?': ':''):'')+(o.why||'')})),()=>S.side==='before'));
-if(locs.length>1)group('','locale',locs);
-if(stage.querySelector('[data-mark]')&&!stage.querySelector('svg'))group('','marks',[{id:'on',label:U.marks}]);
+const set=(k,v)=>{stop();go(k,v)};
+const run=id=>{stop();let t=0;(C.flows&&C.flows[id]||[]).forEach(s=>{timers.push(setTimeout(()=>go('scene',s.scene),t));t+=s.ms||0})};
+const seg=(box,key,opts,off)=>opts.forEach(o=>{const b=el('button',{type:'button'},o.dot?el('i',{className:'pk-dot '+o.dot}):'',o.label);
+  b.onclick=()=>o.act?o.act():set(key,o.id);btns.push({b,key,id:o.id,off});box.append(b)});
+
+if(sides.length>1)seg($('pk-side'),'side',sides.map(s=>({id:s,label:U[s]})));
+if(marked)seg($('pk-tools'),'view',[{id:'spot',label:U.spot},{id:'close',label:U.close,act:()=>{if(S.view==='close')next();else set('view','close')}}]);
+if(C.stress)seg($('pk-tools'),'stress',[{id:'on',label:C.stress.label,act:()=>set('stress',S.stress==='on'?'off':'on')}]);
+if(listed.length>1)seg($('pk-scenes'),'scene',listed.map(s=>({id:s.id,label:s.label,dot:s.badge})));
+vars.forEach(v=>{v.why=el('span',{className:'pk-why'});v.row=el('div',{className:'pk-seg pk-var'},el('span',{className:'pk-lab',textContent:v.label}));
+  seg(v.row,v.id,v.options.map(o=>({id:o.id,label:o.label+(o.rec?' ★':'')})),()=>S.side==='before');v.row.append(v.why);$('pk-vars').append(v.row)});
+
 function render(){
-  const cur=C.states.find(s=>s.id===S.state);
-  if(!cur||!has(cur,S.side))S.state=(C.states.find(s=>has(s,S.side))||C.states[0]).id;
-  ['side','state','locale','marks'].forEach(k=>S[k]&&stage.setAttribute('data-'+k,S[k]));
+  ['side','scene','stress'].forEach(k=>stage.setAttribute('data-'+k,S[k]));
   vars.forEach(v=>stage.setAttribute('data-v-'+v.id,S[v.id]));
   stage.querySelectorAll('[data-show]').forEach(e=>e.toggleAttribute('data-off',!match(e.dataset.show)));
-  const T=C.text&&C.text[S.locale];if(T)stage.querySelectorAll('[data-t]').forEach(e=>{if(e.dataset.t in T)e.textContent=T[e.dataset.t]});
-  btns.forEach(x=>{x.b.setAttribute('aria-pressed',S[x.key]===x.id);x.b.disabled=x.off(x.o)});
-  $('pk-note').textContent=(C.states.find(s=>s.id===S.state)||{}).note||'';
-  $('pk-reply').textContent=['peek r'+(C.rev||1),...vars.map(v=>v.id+'='+S[v.id]),U.ok].join(' · ');
+  const T=S.stress==='on'&&C.stress.text||{};texts.forEach(e=>e.textContent=e.dataset.t in T?T[e.dataset.t]:e._t);
+  btns.forEach(x=>{x.b.setAttribute('aria-pressed',S[x.key]===x.id);x.b.disabled=!!x.off&&x.off()});
+  $('pk-note').textContent=(scenes.find(s=>s.id===S.scene)||{}).note||'';
+  vars.forEach(v=>{v.row.hidden=!(v.on||[]).includes(S.scene);const o=v.options.find(o=>o.id===S[v.id]);v.why.textContent=(o.rec?U.rec+(o.why?': ':''):'')+(o.why||'')});
+  const pick=vars.filter(v=>S[v.id]!==v.rec).map(v=>v.id+'='+S[v.id]),r=$('pk-reply');
+  r.textContent=pick.length?['peek r'+(C.rev||1),...pick,U.ok].join(' · '):U.okHint;r.className=pick.length?'':'hint';$('pk-copy').hidden=!pick.length;
+  sync(true);
 }
-stage.addEventListener('click',e=>{const t=e.target.closest('[data-go],[data-flow]');if(!t||!stage.contains(t))return;t.dataset.flow?run(t.dataset.flow):set('state',t.dataset.go)});
-document.title=$('pk-title').textContent=C.title||'Peek';$('pk-sum').textContent=C.summary||'';$('pk-rev').textContent='r'+(C.rev||1);
-$('pk-frame').classList.add(C.frame||'none');
+
+// Spotlight and close-up. The veil is a blurred twin of the stage with windows cut out of it.
+// Windows are measured from the live page every frame, so they follow anything that moves.
+const P=6,E='cubic-bezier(.2,.8,.2,1)',n=v=>Math.round(v*10)/10;
+let Z=false,F=null,was=[],ghosts=[],lift=false,lt,veil,twin,rings,pool=[];
+function sync(deep){if(!twin)return;twin.style.cssText=stage.style.cssText;if(!deep)return;
+  for(const a of stage.attributes)if(a.name.startsWith('data-'))twin.setAttribute(a.name,a.value);
+  twin.replaceChildren(...stage.cloneNode(true).childNodes)}
+const vis=e=>e.checkVisibility?e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}):!!e.getClientRects().length;
+const sr=()=>{const r=stage.getBoundingClientRect();return{x:r.left,y:r.top,k:r.width/stage.offsetWidth||1}};
+// l = the element's box in stage pixels, unaffected by the camera.
+function live(){const s=sr(),out=[];
+  stage.querySelectorAll('[data-mark],[data-go],[data-flow]').forEach(e=>{if(!vis(e))return;const b=e.getBoundingClientRect();if(!b.width||!b.height)return;
+    out.push({e,es:[e],kind:e.dataset.mark||'tap',l:[(b.left-s.x)/s.k,(b.top-s.y)/s.k,b.width/s.k,b.height/s.k],r:parseFloat(getComputedStyle(e).borderTopLeftRadius)||0})});
+  return out}
+// Boxes whose padded edges touch (≤ 12px apart on the page) become one window.
+function merge(a){a=a.slice();const g=2*P/sr().k;for(let i=0;i<a.length;i++)for(let j=i+1;j<a.length;j++){const p=a[i].l,q=a[j].l;
+  if(p[0]-g<=q[0]+q[2]&&q[0]-g<=p[0]+p[2]&&p[1]-g<=q[1]+q[3]&&q[1]-g<=p[1]+p[3]){const x=Math.min(p[0],q[0]),y=Math.min(p[1],q[1]),A=a[i],B=a[j];
+    a[i]={e:A.e,es:A.es.concat(B.es),was:A.was&&B.was,kind:A.kind===B.kind?A.kind:A.kind==='tap'||A.was&&!B.was?B.kind:B.kind==='tap'||B.was&&!A.was?A.kind:'changed',l:[x,y,Math.max(p[0]+p[2],q[0]+q[2])-x,Math.max(p[1]+p[3],q[1]+q[3])-y],r:Math.max(A.r,B.r)};
+    a.splice(j,1);i=-1;break}}
+  return a}
+const windows=()=>merge(live()).filter(h=>h.kind!=='tap');
+function cam(keep){
+  if(!Z)return;
+  const hs=windows();let h=hs.find(h=>h.es.includes(F));
+  if(!h){if(keep)return;h=hs[0];if(!h)return;F=h.e}
+  const W=$('pk-scenes').clientWidth-2,[x,y,w,ht]=h.l;let k=Math.min(3,(W-48)/w);
+  const H=Math.round(Math.min(Math.max(200,ht*k+48),Math.max(260,innerHeight*.7)));if(ht*k+48>H)k=(H-48)/ht;
+  frame.style.height=H+2+'px';stage.style.transform='translate('+n((W-w*k)/2-x*k)+'px,'+n((H-ht*k)/2-y*k)+'px) scale('+n(k)+')';sync();
+}
+function next(){const hs=windows();if(!hs.length)return;F=hs[(hs.findIndex(h=>h.es.includes(F))+1)%hs.length].e;cam()}
+function lens(){
+  const z=marked&&S.view==='close';if(z===Z)return cam();
+  Z=z;clearTimeout(lt);
+  if(z){stage.style.width=stage.offsetWidth+'px';frame.style.height=frame.offsetHeight+'px';frame.offsetHeight;frame.classList.add('zoom');cam()}
+  else{frame.style.height=stage.offsetHeight+2+'px';frame.classList.remove('zoom');stage.style.transform='';sync();lt=setTimeout(()=>{frame.style.height=stage.style.width='';sync()},340)}
+}
+// After a side switch: what stays slides to its new place, what left keeps its window.
+function flip(old){const now=live(),t=performance.now(),k=sr().k;was=[];
+  old.forEach(o=>{if(o.kind==='tap')return;const m=now.find(m=>m.e===o.e||o.e.dataset.key&&m.e.dataset.key===o.e.dataset.key);
+    if(!m)return was.push({...o,was:true});
+    const dx=o.l[0]-m.l[0],dy=o.l[1]-m.l[1];if(Math.abs(dx)+Math.abs(dy)<1)return;
+    m.e.animate([{translate:dx+'px '+dy+'px'},{translate:'0 0'}],{duration:320,easing:E});
+    if(Math.hypot(dx,dy)*k>8)ghosts.push({...o,kind:'ghost',t})})}
+function go(k,v){
+  const old=k==='side'&&marked?live():null;
+  if(k==='scene'&&!ids.has(v))return;
+  S[k]=v;if(!old&&k!=='view')was=[];render();
+  if(k==='view')lens();else cam(!!old);
+  if(old)flip(old);
+}
+function draw(t){
+  const f=frame.getBoundingClientRect(),s=sr(),ox=s.x-f.left-frame.clientLeft,oy=s.y-f.top-frame.clientTop,W=frame.clientWidth,H=frame.clientHeight;
+  const hs=merge(live().concat(was));ghosts=ghosts.filter(g=>t-g.t<900);
+  let d='M0 0H'+W+'V'+H+'H0Z',area=0,i=0;
+  hs.concat(ghosts).forEach(h=>{
+    const x=n(h.l[0]*s.k+ox-P),y=n(h.l[1]*s.k+oy-P),w=n(h.l[2]*s.k+2*P),ht=n(h.l[3]*s.k+2*P),r=n(Math.min(h.r*s.k+P,w/2,ht/2));
+    if(h.kind!=='ghost'){area+=Math.max(0,Math.min(x+w,W)-Math.max(x,0))*Math.max(0,Math.min(y+ht,H)-Math.max(y,0));
+      d+='M'+n(x+r)+' '+y+'h'+n(w-2*r)+'a'+r+' '+r+' 0 0 1 '+r+' '+r+'v'+n(ht-2*r)+'a'+r+' '+r+' 0 0 1 '+-r+' '+r+'h'+n(2*r-w)+'a'+r+' '+r+' 0 0 1 '+-r+' '+-r+'v'+n(2*r-ht)+'a'+r+' '+r+' 0 0 1 '+r+' '+-r+'z'}
+    let g=pool[i++];if(!g){g=el('div',{},el('button',{type:'button'}));g.firstChild.onclick=()=>{const e=g.h.e;if(Z&&g.h.es.includes(F))return set('view','spot');F=e;S.view==='close'?cam():set('view','close')};rings.append(g);pool.push(g)}
+    g.h=h;g.hidden=false;g.className='pk-ring '+h.kind+(h.was?' was':'');
+    g.style.cssText='left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+ht+'px;border-radius:'+r+'px;opacity:'+(h.kind==='ghost'?n(1-(t-h.t)/900):1);
+    const c=g.firstChild;c.hidden=!U[h.kind]||h.was;c.textContent=U[h.kind]||'';c.style.top=y<14?'':'-9px';c.style.bottom=y<14?'-9px':''});
+  for(;i<pool.length;i++)pool[i].hidden=true;
+  veil.style.clipPath='path(evenodd,"'+d+'")';
+  veil.classList.toggle('off',lift||!hs.some(h=>h.kind!=='tap')||area>.55*W*H);
+  requestAnimationFrame(draw);
+}
+if(marked){
+  twin=el('div',{id:'stage',inert:true});twin.setAttribute('aria-hidden','true');
+  veil=el('div',{className:'pk-veil',title:U.lift},twin);rings=el('div',{className:'pk-rings'});frame.append(veil,rings);
+  const bg=getComputedStyle(stage).backgroundColor;if(!/, 0\)$|transparent/.test(bg)){veil.style.background=bg;veil.style.setProperty('--pk-fog',bg)}
+  veil.onpointerdown=()=>lift=true;veil.onpointerup=veil.onpointerleave=veil.onpointercancel=()=>lift=false;
+  addEventListener('resize',()=>cam());addEventListener('load',()=>cam());requestAnimationFrame(draw);
+}
+
+stage.addEventListener('click',e=>{const t=e.target.closest('[data-go],[data-flow]');if(!t||!stage.contains(t))return;t.dataset.flow?run(t.dataset.flow):set('scene',t.dataset.go)});
+addEventListener('keydown',e=>{const g=e.target.tagName;if(/INPUT|TEXTAREA|SELECT/.test(g)||e.target.isContentEditable||e.metaKey||e.ctrlKey||e.altKey)return;
+  const i=listed.findIndex(s=>s.id===S.scene),d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
+  if(d&&listed.length>1)set('scene',listed[(Math.max(i,0)+d+listed.length)%listed.length].id);
+  else if(e.key===' '&&g!=='BUTTON'&&sides.length>1){e.preventDefault();set('side',sides[(sides.indexOf(S.side)+1)%sides.length])}});
+document.title=$('pk-title').textContent=C.title||'Peek';$('pk-rev').textContent='r'+(C.rev||1);
+frame.classList.add(C.frame||'none');
 const list=(title,items,open)=>{if(!items||!items.length)return;const u=el('ul',{});items.forEach(i=>u.append(i));$('pk-cols').append(el('details',{open},el('summary',{textContent:title+' ('+items.length+')'}),u))};
 const rank={guess:0,convention:1};
-list(U.basis,(C.basis||[]).slice().sort((a,b)=>(rank[a.kind]??2)-(rank[b.kind]??2)).map(b=>el('li',{},b.what+' ',el('code',{textContent:b.source||''}),b.kind==='guess'?el('span',{className:'pk-tag guess',textContent:U.guess}):'')),true);
-const F=C.files||{};
-list(U.change,(F.change||[]).map(f=>el('li',{},el('code',{textContent:f.path}),f.what?' — '+f.what:'')),true);
-list(U.keep,(F.keep||[]).map(k=>el('li',{textContent:k})),false);
+list(U.behavior,(C.behavior||[]).map(b=>el('li',{},b.what+': ',el('span',{className:'pk-old',textContent:b.before}),' → '+b.after)),true);
+list(U.basis,(C.basis||[]).slice().sort((a,b)=>(rank[a.kind]??2)-(rank[b.kind]??2)).map(b=>el('li',{},b.what+' ',el('code',{textContent:b.source||''}),b.kind==='guess'?el('span',{className:'pk-tag',textContent:U.guess}):'')),true);
+const Fs=C.files||{};
+list(U.change,(Fs.change||[]).map(f=>el('li',{},el('code',{textContent:f.path}),f.what?' — '+f.what:'')),true);
+list(U.keep,(Fs.keep||[]).map(k=>el('li',{textContent:k})),false);
 if(!$('pk-cols').children.length)$('pk-cols').remove();
 const cp=$('pk-copy');cp.textContent=U.copy;cp.onclick=async()=>{const t=$('pk-reply').textContent;try{await navigator.clipboard.writeText(t);cp.textContent=U.copied;setTimeout(()=>cp.textContent=U.copy,1200)}catch(_){getSelection().selectAllChildren($('pk-reply'))}};
-render();
+render();lens();
 })();
 </script>
 </body>

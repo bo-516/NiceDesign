@@ -18,8 +18,10 @@ description: >-
   after. Built from `assets/shell.html` by the rules in
   [references/page.md](references/page.md).
 - **product files**: every file except the preview.
-- **state**: one frozen look of the changed region (idle, loading, error…).
-- **variant**: a design decision still open, shown as a switch in the preview.
+- **scene**: one look the change adds, alters, or removes (loading, error,
+  the new section…).
+- **variant**: a visible design decision still open, shown as a switch in the
+  preview.
 - **gate**: the stop between preview and build. Only the user's explicit OK
   passes it.
 
@@ -45,20 +47,23 @@ this skill's folder.
    same kind of thing (toasts, loaders, spacing, tokens, copy tone): count the
    call sites. Collect real assets, real copy, every locale touched.
 2. **Preview** — write the preview. No product file is edited, nothing is
-   installed, migrated, or generated.
+   installed, migrated, or generated. Prefer handing the writing of the
+   preview HTML to a subagent: give it the change, the files you read, the
+   preview path, and this skill's folder.
 3. **Show** — per §Show. End the turn with ≤ 5 lines: what to click, the
-   guesses, the open variants. Ask for the OK.
+   guesses, the open variants, and any open decision with nothing to see, as
+   a question. Ask for the OK.
 4. **Gate** — wait.
    - OK ("ok / 可以 / 就这样 / go", or the reply line copied from the page) →
      Build. A variant the user didn't name → its recommended option.
    - Feedback → edit the same file, `rev` + 1, show again. Feedback is not OK.
    - A question → answer it. Still gated.
-5. **Build** — implement the confirmed revision: every state, the chosen
+5. **Build** — implement the confirmed revision: every scene, the chosen
    variants, nothing more. Something forces a visible difference (an API
    can't, a component lacks the prop) → stop, update the preview, gate again.
-6. **Check** — run the project's checks. Then compare each state of the
+6. **Check** — run the project's checks. Then compare each scene of the
    preview with the result: look at it if you have a browser or simulator
-   tool, else compare the values in code. Report per state: match or
+   tool, else compare the values in code. Report per scene: match or
    deviation; then the files changed. Never report a match you didn't check.
 
 ## File
