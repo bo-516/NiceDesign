@@ -1,6 +1,6 @@
 # score.json
 
-This page and `node scripts/puppet.mjs presets` are the whole interface.
+This page and `node scripts/windup.mjs presets` are the whole interface.
 `presets` lists every preset with what it animates, its defaults, and its
 parameters.
 

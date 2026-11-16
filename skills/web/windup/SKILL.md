@@ -1,5 +1,5 @@
 ---
-name: puppet
+name: windup
 description: >-
   Make an SVG move: animated icons, logo reveals, loaders, draw-on, character
   loops, small scenes. Art and motion stay separate: a static rest pose
@@ -9,7 +9,7 @@ description: >-
   Lottie or Rive, or photoreal illustration.
 disable-model-invocation: true
 ---
-# Puppet
+# Windup
 
 **Terms**
 
@@ -26,14 +26,14 @@ disable-model-invocation: true
 
 **Input**: the text after the command. An SVG path or pasted SVG → animate
 that art: do Rig instead of Block and Draw. Paths are relative to this
-skill's folder. CLI: `node scripts/puppet.mjs <lint|rig|compile|strip|presets>`.
+skill's folder. CLI: `node scripts/windup.mjs <lint|rig|compile|strip|presets>`.
 
 **Files**: one folder: the one the user names, else `<slug>/` in the working
 directory (2–4 words, kebab-case). It keeps `art.svg`, `score.json`,
 `out.svg`, `out.html`. `still.*`, `sheet.*`, `marks.*` are scratch.
 
 **Reference**: [references/score.md](references/score.md) and the `presets`
-command are the whole interface. Don't read `puppet.mjs` to learn it.
+command are the whole interface. Don't read `windup.mjs` to learn it.
 
 ## Flow
 

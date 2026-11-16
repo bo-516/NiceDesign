@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>puppet preview</title>
+<title>windup preview</title>
 <style>
   :root { color-scheme: light dark; --bg: #f4f4f6; --fg: #1b1b1f; --line: #c9c9d1; --panel: #ffffff; }
   @media (prefers-color-scheme: dark) { :root { --bg: #17171a; --fg: #ececf1; --line: #3a3a42; --panel: #212126; } }
@@ -25,7 +25,7 @@
 </style>
 </head>
 <body class="bg-light">
-<div id="stage"><!--PUPPET_SVG--></div>
+<div id="stage"><!--WINDUP_SVG--></div>
 <div id="bar">
   <button id="play" type="button">Pause</button>
   <div id="track"><div id="beats"></div><input id="seek" type="range" min="0" max="1" step="0.001" value="0" aria-label="Time"></div>
@@ -36,7 +36,7 @@
 <script>
 (() => {
   // Seeks from outside: every CSS animation through the Web Animations API, SMIL through the SVG clock.
-  const meta = /*PUPPET_META*/null || { duration: 1, loop: true, beats: {} };
+  const meta = /*WINDUP_META*/null || { duration: 1, loop: true, beats: {} };
   const svg = document.querySelector('#stage > svg');
   const $ = (id) => document.getElementById(id);
   const D = meta.duration;
@@ -75,7 +75,7 @@
   if (meta.bg && /^#(0|1|2|3)/.test(meta.bg)) { document.body.className = 'bg-dark'; $('bg').value = 'dark'; }
   const q = new URLSearchParams(location.search).get('t');   // ?t=1.2 freezes that moment
   if (q !== null) { playing = false; $('play').textContent = 'Play'; t = Number(q) || 0; }
-  window.puppet = { seek: (sec) => { playing = false; $('play').textContent = 'Play'; t = apply(sec); } };
+  window.windup = { seek: (sec) => { playing = false; $('play').textContent = 'Play'; t = apply(sec); } };
   requestAnimationFrame(() => { t = apply(t); last = performance.now(); requestAnimationFrame(tick); });
 })();
 </script>

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// puppet.mjs: art.svg + score.json -> one animated SVG. No dependencies. Node >= 18.
+// windup.mjs: art.svg + score.json -> one animated SVG. No dependencies. Node >= 18.
 //   lint | rig | compile | strip | presets      (run with no arguments for usage)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -1218,7 +1218,7 @@ function keyframes(name, track, dur, decl) {
   return `@keyframes ${name} {\n${lines.join('\n')}\n}`;
 }
 function compile(art, norm, opt = {}) {
-  const pre = opt.prefix ?? 'pp';
+  const pre = opt.prefix ?? 'wu';
   const R = buildRig(art, norm);
   const iter = norm.loop ? 'infinite' : '1';
   const css = [], notes = [];
@@ -1260,7 +1260,7 @@ function compile(art, norm, opt = {}) {
     css.push(`.${name} { ${anim(name)} }`, keyframes(name, track, norm.duration, (v) => `transform: translate(${px(ax)}, ${px(ay)}) scale(${horiz ? r3(clamp01(v)) : 1}, ${horiz ? 1 : r3(clamp01(v))}) translate(${px(-ax)}, ${px(-ay)});`));
   }
   walk(R.svg, (n) => { if (n.type === 'el') delete n.attrs['data-box']; });
-  const head = `/* puppet: ${r3(norm.duration)}s${norm.loop ? ' loop' : ''}, generated from the score. Edit the score, not this block. */`;
+  const head = `/* windup: ${r3(norm.duration)}s${norm.loop ? ' loop' : ''}, generated from the score. Edit the score, not this block. */`;
   const base = `.${pre} { transform-box: view-box; transform-origin: 0 0; }`;
   const reduce = `@media (prefers-reduced-motion: reduce) { .${pre} { animation: none !important; } }`;
   const style = mk('style');
@@ -1348,11 +1348,11 @@ function rigIndex(art) { // every drawable element, numbered in document order
   walk(art.svg, (n) => {
     if (n.type !== 'el' || n === art.svg) return;
     if (SKIP.has(n.name)) return false;
-    if (!isDrawable(n) || n.attrs['data-puppet'] !== undefined) return;
+    if (!isDrawable(n) || n.attrs['data-windup'] !== undefined) return;
     const b = newBox();
     measure(n, n.parent && n.parent.type === 'el' ? ctmOf(n.parent) : IDENT, 1, art, b);
     let depth = 0;
-    for (let p = n.parent; p && p !== art.svg; p = p.parent) if (p.attrs['data-puppet'] === undefined) depth++;
+    for (let p = n.parent; p && p !== art.svg; p = p.parent) if (p.attrs['data-windup'] === undefined) depth++;
     list.push({ n: list.length + 1, el: n, box: boxArr(b), depth });
   });
   return list;
@@ -1362,7 +1362,7 @@ function normalizeViewBox(art) {
   let [x, y, w, h] = vb.length === 4 ? vb : [0, 0, pf(svg.attrs.width), pf(svg.attrs.height)];
   if (!(w > 0 && h > 0)) fail('cannot rig: <svg> has neither a viewBox nor a numeric width and height');
   if (x !== 0 || y !== 0) {
-    const g = mk('g', { 'data-puppet': 'viewbox', transform: `translate(${r2(-x)} ${r2(-y)})` });
+    const g = mk('g', { 'data-windup': 'viewbox', transform: `translate(${r2(-x)} ${r2(-y)})` });
     const keep = [];
     for (const c of svg.children) { if (c.type === 'el' && ['defs', 'style', 'title', 'desc', 'metadata'].includes(c.name)) keep.push(c); else adopt(g, c); }
     svg.children = keep;
@@ -1385,14 +1385,14 @@ function parseArgs(argv) {
   }
   return a;
 }
-const USAGE = `puppet: art.svg + score.json -> one animated SVG
+const USAGE = `windup: art.svg + score.json -> one animated SVG
 
-  node puppet.mjs lint    art.svg [score.json]
-  node puppet.mjs strip   art.svg [score.json] [-o sheet.svg] [--at 0,0.6,1.2] [--frames 12] [--boxes] [--no-png] [--json report.json]
-  node puppet.mjs compile art.svg score.json -o out.svg [--player out.html] [--prefix pp] [--id-prefix x-]
-  node puppet.mjs rig     art.svg --marks [-o marks.svg]
-  node puppet.mjs rig     art.svg --group "name=3,4@center" [--group ...] -o rigged.svg
-  node puppet.mjs presets
+  node windup.mjs lint    art.svg [score.json]
+  node windup.mjs strip   art.svg [score.json] [-o sheet.svg] [--at 0,0.6,1.2] [--frames 12] [--boxes] [--no-png] [--json report.json]
+  node windup.mjs compile art.svg score.json -o out.svg [--player out.html] [--prefix wu] [--id-prefix x-]
+  node windup.mjs rig     art.svg --marks [-o marks.svg]
+  node windup.mjs rig     art.svg --group "name=3,4@center" [--group ...] -o rigged.svg
+  node windup.mjs presets
 
 strip without a score renders the rest pose with each part's box and pivot.
 Pivots for rig: @center @top @bottom @left @right @top-left @top-right @bottom-left @bottom-right, or @x,y.
@@ -1405,7 +1405,7 @@ function cmdLint(a) {
   let norm = null;
   if (a._[1]) { const score = readScore(a._[1], issues); if (score) norm = normalize(art, score, issues); }
   if (norm && !issues.some((i) => i.level === 'E')) seamIssues(art, norm, issues);
-  console.log(`puppet lint  ${path.basename(art.file)}  ${art.W}x${art.H}  ${art.parts.size} parts  ${r2(Buffer.byteLength(art.src) / 1024)} KB`);
+  console.log(`windup lint  ${path.basename(art.file)}  ${art.W}x${art.H}  ${art.parts.size} parts  ${r2(Buffer.byteLength(art.src) / 1024)} KB`);
   if (art.parts.size) console.log(`parts\n${partsTable(art)}`);
   if (norm && norm.clips.length) console.log(`timeline  ${norm.duration}s${norm.loop ? ' loop' : ''}\n${timelineText(norm)}`);
   return printIssues(issues) ? 1 : 0;
@@ -1433,14 +1433,14 @@ function cmdStrip(a) {
   if (!norm) {
     const overlay = [...art.parts.values()].map((p) => ({ box: p.box, pivot: p.el.name === 'g' || p.el.attrs.transform ? p.pivot : null }));
     frames = [{ label: 'rest pose: part boxes and pivots', nodes: frameNodes(art.svg, 0), overlay }];
-    lines.push(`puppet still  ${path.basename(art.file)}  ${art.W}x${art.H}  ${art.parts.size} parts`, `parts\n${partsTable(art)}`);
+    lines.push(`windup still  ${path.basename(art.file)}  ${art.W}x${art.H}  ${art.parts.size} parts`, `parts\n${partsTable(art)}`);
   } else {
     const S = makeSampler(art, norm);
     const times = a.at ? String(a.at).split(',').map(Number).filter((t) => t >= 0 && t <= norm.duration) : pickTimes(norm, Number(a.frames ?? 12));
     if (!times.length) fail('--at: no time inside the score');
     const animated = [...new Set(norm.tracks.map((t) => t.part))];
     const beatAt = (t) => Object.entries(norm.beats).find(([, b]) => t >= b[0] - 1e-6 && t < b[1] - 1e-6)?.[0] ?? '';
-    lines.push(`puppet strip  ${path.basename(art.file)}  ${art.W}x${art.H}  ${norm.duration}s${norm.loop ? ' loop' : ''}  ${norm.clips.length} clips  ${times.length} frames`);
+    lines.push(`windup strip  ${path.basename(art.file)}  ${art.W}x${art.H}  ${norm.duration}s${norm.loop ? ' loop' : ''}  ${norm.clips.length} clips  ${times.length} frames`);
     lines.push(`timeline\n${timelineText(norm)}`);
     lines.push('frames  (box = x,y,w,h in canvas units)');
     const w = Math.max(...animated.map((s) => s.length), 4);
@@ -1485,7 +1485,7 @@ function cmdCompile(a) {
   const res = compile(art, norm, { prefix: a.prefix, idPrefix: a['id-prefix'] });
   fs.mkdirSync(path.dirname(path.resolve(a.o)), { recursive: true });
   fs.writeFileSync(a.o, res.svg);
-  console.log(`puppet compile  ${path.basename(a.o)}  ${r2(Buffer.byteLength(res.svg) / 1024)} KB  ${norm.duration}s${norm.loop ? ' loop' : ''}  ${norm.clips.length} clips  ${res.tracks} tracks  driver: CSS${res.notes.length ? ' + SMIL' : ''}`);
+  console.log(`windup compile  ${path.basename(a.o)}  ${r2(Buffer.byteLength(res.svg) / 1024)} KB  ${norm.duration}s${norm.loop ? ' loop' : ''}  ${norm.clips.length} clips  ${res.tracks} tracks  driver: CSS${res.notes.length ? ' + SMIL' : ''}`);
   for (const n of res.notes) console.log(`note  ${n}`);
   const warns = issues.filter((i) => i.level === 'W');
   if (warns.length) console.log(warns.map((i) => 'W  ' + i.msg).join('\n'));
@@ -1493,7 +1493,7 @@ function cmdCompile(a) {
     const tpl = fs.readFileSync(path.join(HERE, '..', 'assets', 'player.html'), 'utf8');
     const meta = JSON.stringify({ duration: norm.duration, loop: norm.loop, beats: norm.beats, bg: norm.bg, name: path.basename(a.o) });
     const inline = res.svg.replace(/^\s*<\?xml[^>]*\?>\s*/, '');
-    fs.writeFileSync(a.player, tpl.replace('<!--PUPPET_SVG-->', () => inline).replace('/*PUPPET_META*/null', () => meta));
+    fs.writeFileSync(a.player, tpl.replace('<!--WINDUP_SVG-->', () => inline).replace('/*WINDUP_META*/null', () => meta));
     console.log(`player: ${a.player}`);
   }
   console.log(`out: ${a.o}`);
@@ -1539,14 +1539,14 @@ function cmdRig(a) {
     }
     fs.writeFileSync(a.o, serialize(art.doc));
     const re = loadArt(a.o);
-    console.log(`puppet rig  ${path.basename(a.o)}  ${re.W}x${re.H}  ${re.parts.size} parts\nparts\n${partsTable(re)}\nout: ${a.o}`);
+    console.log(`windup rig  ${path.basename(a.o)}  ${re.W}x${re.H}  ${re.parts.size} parts\nparts\n${partsTable(re)}\nout: ${a.o}`);
     return 0;
   }
   const rows = list.map((e) => {
     const fill = styleOf(e.el, 'fill', art), stroke = styleOf(e.el, 'stroke', art);
     return `${'  '.repeat(e.depth)}#${e.n} ${e.el.name}${e.el.attrs.id ? ` id=${e.el.attrs.id}` : ''}  box ${boxTxt(e.box)}${LEAF.has(e.el.name) ? `${fill && fill !== 'none' ? `  fill ${fill}` : ''}${stroke && stroke !== 'none' ? `  stroke ${stroke}` : ''}` : ''}`;
   });
-  console.log(`puppet rig  ${path.basename(art.file)}  ${art.W}x${art.H}  ${list.length} elements\n${rows.join('\n')}`);
+  console.log(`windup rig  ${path.basename(art.file)}  ${art.W}x${art.H}  ${list.length} elements\n${rows.join('\n')}`);
   if (a.marks) {
     const out = a.o ?? path.join(path.dirname(art.file), 'marks.svg');
     const overlay = list.filter((e) => e.box && e.el.name !== 'g').map((e) => ({ mark: e.n, at: [e.box[0] + e.box[2] / 2, e.box[1] + e.box[3] / 2] }));
