@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windup preview</title>
+<style>
+  :root { color-scheme: light dark; --bg: #f4f4f6; --fg: #1b1b1f; --line: #c9c9d1; --panel: #ffffff; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #17171a; --fg: #ececf1; --line: #3a3a42; --panel: #212126; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--fg); font: 14px/1.4 system-ui, sans-serif; }
+  #stage { flex: 1; display: grid; place-items: center; padding: 24px; min-height: 0; }
+  #stage > svg { width: min(100%, 960px); max-height: 72vh; height: auto; display: block; border: 1px solid var(--line); }
+  .bg-light #stage > svg { background: #ffffff; }
+  .bg-dark #stage > svg { background: #15151a; }
+  .bg-check #stage > svg { background: repeating-conic-gradient(#d9d9de 0% 25%, #ffffff 0% 50%) 0 0 / 20px 20px; }
+  #bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 16px; background: var(--panel); border-top: 1px solid var(--line); }
+  #bar button, #bar select { font: inherit; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); cursor: pointer; }
+  #play { min-width: 76px; }
+  #track { flex: 1; min-width: 180px; position: relative; padding-top: 16px; }
+  #seek { width: 100%; margin: 0; display: block; }
+  #beats { position: absolute; inset: 0 0 auto 0; height: 14px; font-size: 11px; opacity: .75; pointer-events: none; }
+  #beats span { position: absolute; top: 0; border-left: 1px solid var(--fg); padding-left: 4px; white-space: nowrap; overflow: hidden; }
+  #time { font-variant-numeric: tabular-nums; min-width: 96px; text-align: right; }
+</style>
+</head>
+<body class="bg-light">
+<div id="stage"><!--WINDUP_SVG--></div>
+<div id="bar">
+  <button id="play" type="button">Pause</button>
+  <div id="track"><div id="beats"></div><input id="seek" type="range" min="0" max="1" step="0.001" value="0" aria-label="Time"></div>
+  <span id="time">0.00 / 0.00 s</span>
+  <label>Speed <select id="speed"><option>0.25</option><option>0.5</option><option selected>1</option><option>2</option></select></label>
+  <label>Background <select id="bg"><option value="light">light</option><option value="dark">dark</option><option value="check">checker</option></select></label>
+</div>
+<script>
+(() => {
+  // Seeks from outside: every CSS animation through the Web Animations API, SMIL through the SVG clock.
+  const meta = /*WINDUP_META*/null || { duration: 1, loop: true, beats: {} };
+  const svg = document.querySelector('#stage > svg');
+  const $ = (id) => document.getElementById(id);
+  const D = meta.duration;
+  const anims = () => document.getAnimations().filter((a) => a.effect && svg.contains(a.effect.target));
+  let playing = true, speed = 1, t = 0, last = performance.now();
+  const apply = (sec) => {
+    const s = meta.loop ? ((sec % D) + D) % D : Math.max(0, Math.min(D, sec));
+    for (const a of anims()) { a.pause(); a.currentTime = s * 1000; }
+    if (svg.pauseAnimations) { svg.pauseAnimations(); svg.setCurrentTime(s); }
+    $('seek').value = String(s / D);
+    $('time').textContent = s.toFixed(2) + ' / ' + D.toFixed(2) + ' s';
+    return s;
+  };
+  const tick = (now) => {
+    if (playing) {
+      t += ((now - last) / 1000) * speed;
+      if (!meta.loop && t >= D) { t = D; playing = false; $('play').textContent = 'Replay'; }
+      t = apply(t);
+    }
+    last = now;
+    requestAnimationFrame(tick);
+  };
+  $('play').onclick = () => {
+    if (!playing && !meta.loop && t >= D) t = 0;
+    playing = !playing; last = performance.now();
+    $('play').textContent = playing ? 'Pause' : 'Play';
+  };
+  $('seek').oninput = (e) => { playing = false; $('play').textContent = 'Play'; t = apply(Number(e.target.value) * D); };
+  $('speed').onchange = (e) => { speed = Number(e.target.value); };
+  $('bg').onchange = (e) => { document.body.className = 'bg-' + e.target.value; };
+  for (const [name, b] of Object.entries(meta.beats || {})) {
+    const s = document.createElement('span');
+    s.textContent = name; s.style.left = (b[0] / D) * 100 + '%'; s.style.width = ((b[1] - b[0]) / D) * 100 + '%';
+    $('beats').appendChild(s);
+  }
+  if (meta.bg && /^#(0|1|2|3)/.test(meta.bg)) { document.body.className = 'bg-dark'; $('bg').value = 'dark'; }
+  const q = new URLSearchParams(location.search).get('t');   // ?t=1.2 freezes that moment
+  if (q !== null) { playing = false; $('play').textContent = 'Play'; t = Number(q) || 0; }
+  window.windup = { seek: (sec) => { playing = false; $('play').textContent = 'Play'; t = apply(sec); } };
+  requestAnimationFrame(() => { t = apply(t); last = performance.now(); requestAnimationFrame(tick); });
+})();
+</script>
+</body>
+</html>
