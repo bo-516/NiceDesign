@@ -129,6 +129,9 @@ A framed page with marks has two views; the reader switches between them.
 
 - Mark the smallest element that holds the change, not its container. An
   element the change only pushes aside is not marked.
+- Never add an element only to carry a mark (an overlay, a wrapper).
+- A restyle of a whole surface (a panel's or screen's material, background,
+  theme) → no mark: the side switch shows it, the scene `note` names it.
 - Marked elements and what touches them are exact. Blocks further away may
   be labeled boxes at their real size and position.
 - `frame: none` has no views.
@@ -168,6 +171,8 @@ Before showing:
 - Before and After differ on every scene with a badge; every flow ends on a
   resting look.
 - Before matches the current code.
-- Everything new or altered in the stage carries `data-mark`; nothing else
-  does.
+- Everything new or altered in the stage carries `data-mark`, except a
+  whole-surface restyle; nothing else does.
+- Spotlight: each window hugs what it marks. An oval, or one window over most
+  of the frame on a scene whose change is smaller → re-mark.
 - `git status` shows no product file changed.
