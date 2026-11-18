@@ -156,10 +156,10 @@ function live(){const s=sr(),out=[];
   stage.querySelectorAll('[data-mark],[data-go],[data-flow]').forEach(e=>{if(!vis(e))return;const b=e.getBoundingClientRect();if(!b.width||!b.height)return;
     out.push({e,es:[e],kind:e.dataset.mark||'tap',l:[(b.left-s.x)/s.k,(b.top-s.y)/s.k,b.width/s.k,b.height/s.k],r:parseFloat(getComputedStyle(e).borderTopLeftRadius)||0})});
   return out}
-// Boxes whose padded edges touch (≤ 12px apart on the page) become one window.
+// Boxes whose padded edges touch (≤ 12px apart on the page) become one window, with the larger box's corner radius.
 function merge(a){a=a.slice();const g=2*P/sr().k;for(let i=0;i<a.length;i++)for(let j=i+1;j<a.length;j++){const p=a[i].l,q=a[j].l;
   if(p[0]-g<=q[0]+q[2]&&q[0]-g<=p[0]+p[2]&&p[1]-g<=q[1]+q[3]&&q[1]-g<=p[1]+p[3]){const x=Math.min(p[0],q[0]),y=Math.min(p[1],q[1]),A=a[i],B=a[j];
-    a[i]={e:A.e,es:A.es.concat(B.es),was:A.was&&B.was,kind:A.kind===B.kind?A.kind:A.kind==='tap'||A.was&&!B.was?B.kind:B.kind==='tap'||B.was&&!A.was?A.kind:'changed',l:[x,y,Math.max(p[0]+p[2],q[0]+q[2])-x,Math.max(p[1]+p[3],q[1]+q[3])-y],r:Math.max(A.r,B.r)};
+    a[i]={e:A.e,es:A.es.concat(B.es),was:A.was&&B.was,kind:A.kind===B.kind?A.kind:A.kind==='tap'||A.was&&!B.was?B.kind:B.kind==='tap'||B.was&&!A.was?A.kind:'changed',l:[x,y,Math.max(p[0]+p[2],q[0]+q[2])-x,Math.max(p[1]+p[3],q[1]+q[3])-y],r:p[2]*p[3]>=q[2]*q[3]?A.r:B.r};
     a.splice(j,1);i=-1;break}}
   return a}
 const windows=()=>merge(live()).filter(h=>h.kind!=='tap');
